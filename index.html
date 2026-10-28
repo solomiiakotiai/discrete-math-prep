@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fbf7f0">
+  <title>Дискретна математика — простір для підготовки</title>
+  <style>
+    :root {
+      --paper: #fbf7f0;
+      --surface: #fffdf9;
+      --ink: #33242c;
+      --muted: #8c7b82;
+      --line: #eee4df;
+      --berry: #9b3157;
+      --berry-dark: #762443;
+      --pink: #f3d5dc;
+      --pink-light: #fae9e8;
+      --butter: #f6e6aa;
+      --mint: #dce9dc;
+      --shadow: 0 14px 38px rgba(76, 39, 50, .07);
+      --round: 24px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font: 15px/1.6 "Plus Jakarta Sans", "Avenir Next", Avenir, "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+
+    .app-shell {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      min-height: 100vh;
+      align-items: start;
+    }
+    .sidebar {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 24px 18px;
+      background: rgba(255, 253, 249, .92);
+      border-right: 1px solid var(--line);
+      backdrop-filter: blur(14px);
+    }
+    .sidebar-top { display: flex; flex-direction: column; gap: 18px; }
+    .brand { display: inline-flex; align-items: center; gap: 11px; padding: 4px 6px; color: var(--ink); text-decoration: none; font-size: .95rem; font-weight: 800; letter-spacing: -.03em; }
+    .brand-mark { display: grid; place-items: center; flex: 0 0 38px; width: 38px; height: 38px; border-radius: 13px; color: white; background: var(--berry); font-family: Georgia, serif; font-size: 1.2rem; transform: rotate(-5deg); }
+    .brand small { display: block; color: var(--muted); font-size: .66rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; }
+    .top-meta { display: inline-flex; align-items: center; gap: 9px; padding: 8px 12px; border-radius: 12px; background: var(--paper); border: 1px solid var(--line); color: var(--muted); font-size: .78rem; font-weight: 700; }
+    .live-dot { width: 8px; height: 8px; border-radius: 50%; background: #83a982; box-shadow: 0 0 0 4px rgba(131,169,130,.15); }
+
+    .sidebar-label { padding: 0 10px; color: var(--muted); font-size: .69rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+    .tabs {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .tabs button {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      width: 100%;
+      padding: 11px 14px;
+      border: 1px solid transparent;
+      border-radius: 13px;
+      background: transparent;
+      color: var(--ink);
+      text-align: left;
+      font-size: .88rem;
+      font-weight: 700;
+      transition: .18s;
+    }
+    .tabs button small {
+      color: var(--muted);
+      font-size: .72rem;
+      font-weight: 600;
+    }
+    .tabs button:hover { color: var(--berry); background: var(--pink-light); }
+    .tabs button.active {
+      background: var(--berry);
+      color: white;
+      box-shadow: 0 6px 16px rgba(155,49,87,.2);
+    }
+    .tabs button.active small { color: rgba(255,255,255,.82); }
+
+    .sidebar-card {
+      padding: 16px;
+      border-radius: 18px;
+      background: var(--pink-light);
+      border: 1px solid #efcfd5;
+    }
+    .sidebar-card .eyebrow { font-size: .66rem; }
+    .sidebar-card h2 {
+      margin: 6px 0 6px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 1.25rem;
+      font-weight: 500;
+      line-height: 1.1;
+      letter-spacing: -.03em;
+    }
+    .sidebar-card h2 em { color: var(--berry); font-weight: 500; }
+    .sidebar-card p { margin: 0; color: var(--muted); font-size: .78rem; line-height: 1.45; }
+
+    main {
+      width: min(1080px, 100%);
+      margin: 0 auto;
+      padding: 28px 34px 64px;
+    }
+    .eyebrow { display: inline-flex; align-items: center; gap: 9px; color: var(--berry); font-size: .75rem; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
+    .eyebrow::before { content: ""; width: 22px; height: 1px; background: currentColor; }
+    h1, h2, h3, p { margin-top: 0; }
+    .button { display: inline-flex; align-items: center; justify-content: center; gap: 9px; min-height: 44px; padding: 0 18px; border: 1px solid var(--line); border-radius: 13px; background: var(--surface); color: var(--ink); font-weight: 750; transition: transform .2s, box-shadow .2s, background .2s; }
+    .button:hover { transform: translateY(-2px); box-shadow: 0 8px 18px rgba(76,39,50,.09); }
+    .button.primary { border-color: var(--berry); background: var(--berry); color: white; }
+    .button.primary:hover { background: var(--berry-dark); }
+    section[hidden] { display: none; }
+    .section-heading { display: flex; justify-content: space-between; align-items: end; gap: 18px; margin: 0 2px 18px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+    .section-heading h2 { margin: 4px 0 0; font-family: Georgia, serif; font-size: clamp(1.65rem, 3.2vw, 2.25rem); font-weight: 500; letter-spacing: -.04em; }
+    .section-heading p { max-width: 430px; margin: 0; color: var(--muted); font-size: .88rem; }
+    .panel { border: 1px solid var(--line); border-radius: var(--round); background: var(--surface); box-shadow: var(--shadow); }
+    .panel-pad { padding: 25px; }
+    .calc-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+    .calc-panel { padding: 27px; }
+    .mini-label { color: var(--muted); font-size: .73rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+    .calc-panel h3, .panel h3 { margin: 8px 0 6px; font-family: Georgia, serif; font-size: 1.6rem; font-weight: 500; letter-spacing: -.035em; }
+    .helper { color: var(--muted); font-size: .88rem; }
+    .input-row { display: flex; gap: 9px; margin-top: 20px; }
+    input[type="number"], input[type="search"] { min-width: 0; padding: 12px 14px; border: 1px solid #e7d8d3; border-radius: 12px; outline: none; background: #fffefa; color: var(--ink); transition: border .2s, box-shadow .2s; }
+    input:focus { border-color: var(--berry); box-shadow: 0 0 0 3px rgba(155,49,87,.11); }
+    #k-val { width: 150px; }
+    .formula-panel { padding: 26px; background: var(--butter); border-color: #ecdda9; box-shadow: none; }
+    .formula-panel h3 { color: #6d5425; }
+    .formula-list { display: grid; gap: 10px; margin-top: 18px; }
+    .formula-row { display: flex; justify-content: space-between; gap: 15px; padding-top: 10px; border-top: 1px solid rgba(109,84,37,.17); color: #6d5425; font-size: .85rem; }
+    .formula-row b { white-space: nowrap; }
+    #k-res { margin-top: 17px; }
+    .result-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 15px; }
+    table { width: 100%; border-collapse: collapse; min-width: 430px; }
+    th, td { padding: 13px 15px; border-bottom: 1px solid var(--line); text-align: left; font-size: .88rem; }
+    th { background: #fbf1ef; color: var(--berry); font-size: .74rem; letter-spacing: .08em; text-transform: uppercase; }
+    tr:last-child td { border-bottom: 0; }
+    .tag { display: inline-flex; align-items: center; width: fit-content; padding: 5px 10px; border-radius: 999px; background: var(--pink-light); color: var(--berry); font-size: .7rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
+
+    .progress-panel { padding: 23px 26px; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 18px; margin-bottom: 16px; }
+    .progress-panel h3 { margin: 0 0 3px; font-family: inherit; font-size: .98rem; font-weight: 800; }
+    .progress-panel p { margin: 0; color: var(--muted); font-size: .83rem; }
+    .progress-number { color: var(--berry); font-family: Georgia, serif; font-size: 2rem; }
+    .progress-track { grid-column: 1 / -1; height: 9px; overflow: hidden; border-radius: 99px; background: #f2e8e4; }
+    .progress-fill { height: 100%; width: 0; border-radius: inherit; background: linear-gradient(90deg, #bd5676, #e49a8c); transition: width .3s; }
+    .plan-layout { display: grid; grid-template-columns: .72fr 1.28fr; gap: 16px; align-items: start; }
+    .timer-panel { position: sticky; top: 95px; padding: 25px; text-align: center; background: var(--pink-light); border-color: #f0d5d7; box-shadow: none; }
+    .timer-panel .mini-label { color: var(--berry); }
+    .timer { margin: 10px 0 14px; color: var(--berry); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: clamp(2.5rem, 5vw, 3.5rem); font-weight: 700; letter-spacing: -.07em; }
+    .timer-actions { display: flex; justify-content: center; gap: 8px; }
+    .timer-actions .button { min-height: 40px; padding: 0 13px; font-size: .83rem; }
+    .tasks-panel { padding: 25px; }
+    .plan-day { padding: 0 0 17px 17px; border-left: 2px solid #e9beca; }
+    .plan-day:last-child { padding-bottom: 0; }
+    .day-name { margin: 0 0 7px; color: var(--berry); font-size: .9rem; font-weight: 850; }
+    .plan-item { display: flex; align-items: flex-start; gap: 10px; padding: 7px 8px; border-radius: 9px; color: #5c4a51; font-size: .86rem; cursor: pointer; }
+    .plan-item:hover { background: #fcf4ef; }
+    .plan-item input { flex: 0 0 auto; width: 17px; height: 17px; margin: 2px 0 0; accent-color: var(--berry); }
+
+    .cards-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 14px; }
+    #card-search { width: min(370px, 68%); }
+    #card-counter { color: var(--muted); font-size: .82rem; font-weight: 750; }
+    .flashcard { min-height: 315px; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding: clamp(25px, 6vw, 58px); border: 1px solid #efcfd5; border-radius: 27px; background: var(--pink-light); box-shadow: none; cursor: pointer; transition: background .2s; }
+    .flashcard:hover { background: #f8e1e2; }
+    .flashcard .q { max-width: 690px; margin-top: 19px; font-family: Georgia, serif; font-size: clamp(1.8rem, 5vw, 3.5rem); line-height: 1.1; letter-spacing: -.04em; }
+    .flashcard .a { max-width: 760px; margin-top: 19px; font-size: 1rem; line-height: 1.9; }
+    .card-controls { display: flex; justify-content: space-between; gap: 10px; margin-top: 14px; }
+    .card-hint { align-self: center; color: var(--muted); font-size: .78rem; }
+    .empty-state { color: var(--muted); padding: 22px 0; }
+    .examples-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .topic-notes { display: grid; gap: 16px; margin-top: 18px; }
+    .topic-note { padding: 24px; }
+    .topic-note.mint { background: var(--mint); border-color: #d0dfd0; box-shadow: none; }
+    .topic-note details { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
+    .topic-note summary { color: var(--berry); font-weight: 800; cursor: pointer; }
+    .topic-note .solution { margin-top: 10px; padding: 13px 15px; border-radius: 12px; background: #f7f0e6; }
+    .example-card { padding: 25px; }
+    .example-card h3 { margin: 9px 0 10px; font-family: Georgia, serif; font-size: 1.5rem; font-weight: 500; }
+    .example-card p { color: #65545a; font-size: .9rem; }
+    .code { display: block; margin: 12px 0; padding: 13px 15px; border-radius: 12px; background: #f7f0e6; color: var(--berry-dark); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .84rem; overflow-wrap: anywhere; }
+    .example-card.mint { background: var(--mint); border-color: #d0dfd0; box-shadow: none; }
+    .sim-panel { padding: clamp(25px, 6vw, 50px); text-align: center; background: var(--butter); border-color: #ecdda9; box-shadow: none; }
+    .sim-panel h2 { margin: 9px 0; font-family: Georgia, serif; font-size: clamp(1.8rem, 4vw, 2.7rem); font-weight: 500; letter-spacing: -.04em; }
+    .sim-panel p { max-width: 520px; margin: 0 auto 20px; color: #75633a; }
+    .sim-time { margin: 5px 0 20px; color: var(--berry); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: clamp(3.4rem, 10vw, 5.6rem); font-weight: 700; line-height: 1; letter-spacing: -.08em; }
+    #sim-ticket { margin-top: 16px; }
+    .ticket-card { padding: 22px 25px; }
+    .ticket-card h3 { margin: 10px 0 5px; font-family: Georgia, serif; font-size: 1.55rem; font-weight: 500; }
+
+    .ticket-solutions-section { margin-top: 22px; }
+    .ticket-solutions-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 22px 25px; margin-bottom: 16px; background: var(--pink-light); border-color: #efcfd5; }
+    .ticket-solutions-header h3 { margin: 4px 0 0; font-family: Georgia, serif; font-size: 1.65rem; font-weight: 500; }
+    .ticket-badges { display: flex; flex-wrap: wrap; gap: 8px; }
+    .ticket-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; background: var(--surface); border: 1px solid #e7cfd5; color: var(--berry-dark); font-size: .78rem; font-weight: 800; }
+    .ticket-solutions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .ticket-solution-card { padding: 24px; display: flex; flex-direction: column; gap: 10px; }
+    .ticket-solution-card.mint { background: var(--mint); border-color: #d0dfd0; box-shadow: none; }
+    .ticket-solution-card.butter { background: var(--butter); border-color: #ecdda9; box-shadow: none; }
+    .ticket-solution-meta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+    .ticket-solution-card h4 { margin: 2px 0 0; font-family: Georgia, serif; font-size: 1.35rem; font-weight: 500; color: var(--ink); }
+    .ticket-solution-card p { margin: 0; color: #5c4a51; font-size: .89rem; }
+    .proof-box { padding: 13px 15px; border-radius: 12px; background: #f7f0e6; border-left: 3px solid var(--berry); color: var(--ink); font-size: .87rem; line-height: 1.65; }
+    .proof-box b { color: var(--berry-dark); }
+
+    .study-modes { display: grid; grid-template-columns: repeat(5, 1fr); gap: 11px; margin-bottom: 18px; }
+    .mode-button { min-height: 112px; padding: 17px 15px; border: 1px solid var(--line); border-radius: 17px; background: var(--surface); color: var(--ink); text-align: left; transition: .2s; }
+    .mode-button:hover, .mode-button.active { border-color: #d99aaa; background: var(--pink-light); transform: translateY(-2px); }
+    .mode-button b { display: block; margin-bottom: 4px; color: var(--berry); font-size: .93rem; }
+    .mode-button span { color: var(--muted); font-size: .78rem; line-height: 1.45; }
+    .study-output { min-height: 240px; padding: clamp(22px, 4vw, 34px); }
+    .study-output h3 { margin: 8px 0 10px; }
+    .study-output p { color: #65545a; }
+    .study-output .code { line-height: 1.8; }
+    .study-actions { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 16px; }
+    .quiz-question { padding: 17px 0; border-top: 1px solid var(--line); }
+    .quiz-question:first-child { border-top: 0; }
+    .quiz-question p { margin-bottom: 9px; color: var(--ink); font-weight: 750; }
+    .quiz-option { display: flex; gap: 9px; align-items: flex-start; padding: 6px 0; color: #65545a; cursor: pointer; }
+    .quiz-option input { margin-top: 5px; accent-color: var(--berry); }
+    .quiz-feedback { margin-top: 14px; padding: 13px 15px; border-radius: 12px; background: var(--mint); color: #38533d; }
+    .quiz-feedback.incorrect { background: var(--pink-light); color: var(--berry-dark); }
+    .answer-area { width: 100%; min-height: 125px; margin-top: 10px; padding: 13px 15px; resize: vertical; border: 1px solid #e7d8d3; border-radius: 12px; background: #fffefa; color: var(--ink); font: inherit; }
+    .answer-area:focus { outline: 3px solid rgba(155,49,87,.11); border-color: var(--berry); }
+    .concept-select { width: 100%; margin: 16px 0 0; padding: 12px 14px; border: 1px solid #e7d8d3; border-radius: 12px; background: #fffefa; color: var(--ink); font: inherit; }
+    footer { padding: 30px 10px 0; color: var(--muted); text-align: center; font-size: .78rem; }
+
+    @media (max-width: 880px) {
+      .app-shell { grid-template-columns: 1fr; }
+      .sidebar {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        height: auto;
+        padding: 12px 16px;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+        gap: 10px;
+      }
+      .sidebar-top { gap: 10px; }
+      .sidebar-header-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+      .sidebar-label, .sidebar-card { display: none; }
+      .tabs { flex-direction: row; overflow-x: auto; gap: 6px; padding-bottom: 2px; scrollbar-width: thin; }
+      .tabs button { width: auto; flex: 0 0 auto; padding: 8px 12px; font-size: .82rem; }
+      .tabs button small { display: none; }
+      main { width: min(100% - 28px, 680px); padding: 20px 0 48px; }
+      .calc-grid, .plan-layout, .examples-grid, .ticket-solutions-grid { grid-template-columns: 1fr; }
+      .study-modes { grid-template-columns: repeat(2, 1fr); }
+      .timer-panel { position: static; }
+      .section-heading { align-items: flex-start; flex-direction: column; }
+      .section-heading p { max-width: none; }
+    }
+    @media (max-width: 480px) {
+      .brand { font-size: .83rem; }
+      .brand-mark { width: 34px; height: 34px; flex-basis: 34px; }
+      .study-modes { grid-template-columns: 1fr 1fr; gap: 8px; }
+      .mode-button { min-height: 100px; padding: 13px 11px; }
+      .top-meta { font-size: .72rem; padding: 6px 9px; }
+      .input-row { align-items: stretch; flex-direction: column; }
+      #k-val { width: 100%; }
+      .input-row .button { width: 100%; }
+      .calc-panel, .formula-panel, .tasks-panel, .example-card { padding: 21px; }
+      .progress-panel { padding: 20px; }
+      .cards-toolbar { align-items: flex-start; flex-direction: column; }
+      #card-search { width: 100%; }
+      .card-hint { display: none; }
+      .card-controls .button { padding: 0 13px; }
+      .flashcard { min-height: 280px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Бічна панель навігації">
+      <div class="sidebar-top">
+        <div class="sidebar-header-row">
+          <a class="brand" href="#top" onclick="tab('calc')" aria-label="На головну — Мій білет">
+            <span class="brand-mark">∑</span>
+            <span>Математика без паніки<small>Твій простір підготовки</small></span>
+          </a>
+        </div>
+        <div class="top-meta"><span class="live-dot"></span><span>Колоквіум · Nivel 1–4</span></div>
+        <div class="sidebar-label">Головна сторінка</div>
+        <nav class="tabs" aria-label="Розділи">
+          <button id="tb-calc" class="active" onclick="tab('calc')"><span>Мій білет і розв’язки</span><small>Головна</small></button>
+          <div class="sidebar-label" style="margin-top:8px;padding-left:4px">Інші режими</div>
+          <button id="tb-cards" onclick="tab('cards')"><span>Картки</span><small>Повторення</small></button>
+          <button id="tb-plan" onclick="tab('plan')"><span>План</span><small>Помодоро</small></button>
+          <button id="tb-examples" onclick="tab('examples')"><span>Приклади</span><small>Конспект</small></button>
+          <button id="tb-study" onclick="tab('study')"><span>Навчальні режими</span><small>5 форматів</small></button>
+          <button id="tb-sim" onclick="tab('sim')"><span>Симулятор</span><small>7 хв</small></button>
+        </nav>
+      </div>
+      <div class="sidebar-card">
+        <span class="eyebrow">Навчайся у своєму темпі</span>
+        <h2>Складне стає <em>простішим.</em></h2>
+        <p>Усе для підготовки до колоквіуму з дискретної математики — зібране в одному затишному місці.</p>
+      </div>
+    </aside>
+
+    <main id="top">
+      <section id="sec-calc">
+        <div class="section-heading">
+          <div><span class="eyebrow">Головна · Розрахунок білета та доведення</span><h2>Твій білет, питання Nivel 1–4 та розв’язки</h2></div>
+          <p>Введи номер свого варіанта k, щоб одразу побачити номери питань, Nivel та повні розв’язки й доведення.</p>
+        </div>
+      <div class="calc-grid">
+        <div class="panel calc-panel">
+          <span class="mini-label">Персональний набір</span>
+          <h3>Розрахуй варіант k</h3>
+          <p class="helper">Номер варіанта — ціле число від 1 до 100.</p>
+          <div class="input-row">
+            <input type="number" id="k-val" min="1" max="100" value="1" aria-label="Номер варіанта k">
+            <button class="button primary" onclick="calcK()">Показати білет <span aria-hidden="true">→</span></button>
+          </div>
+          <div id="k-res" aria-live="polite"></div>
+        </div>
+      </div>
+      <div id="ticket-solutions-block" class="ticket-solutions-section" aria-live="polite"></div>
+    </section>
+
+    <section id="sec-plan" hidden>
+      <div class="section-heading"><div><span class="eyebrow">Рухайся без поспіху</span><h2>План підготовки</h2></div><p>Позначай виконані кроки — прогрес збережеться у цьому браузері.</p></div>
+      <div class="panel progress-panel">
+        <div><h3>Загальний прогрес</h3><p>Кожен пункт — ще один крок до впевненості.</p></div>
+        <div class="progress-number" id="plan-percent">0%</div>
+        <div class="progress-track"><div class="progress-fill" id="plan-prog"></div></div>
+      </div>
+      <div class="plan-layout">
+        <aside class="panel timer-panel">
+          <span class="mini-label">Фокус-сесія</span><h3>Помодоро</h3>
+          <div class="timer" id="pomo-display">25:00</div>
+          <div class="timer-actions"><button class="button primary" id="pomo-btn" onclick="togglePomo()">Старт</button><button class="button" onclick="resetPomo()">Скинути</button></div>
+        </aside>
+        <div class="panel tasks-panel" id="plan-items-container"></div>
+      </div>
+    </section>
+
+    <section id="sec-cards" hidden>
+      <div class="section-heading"><div><span class="eyebrow">Згадуй активно</span><h2>Картки для повторення</h2></div><p>Натисни на картку, щоб побачити відповідь. Шукай за темою або номером.</p></div>
+      <div class="cards-toolbar"><input type="search" id="card-search" placeholder="Наприклад: множина, Nivel 3…" oninput="filterCards()"><span id="card-counter"></span></div>
+      <div class="flashcard" id="flashcard" onclick="flipCard()" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipCard();}"><div id="fc-content"></div></div>
+      <div class="card-controls"><button class="button" onclick="prevCard()">← Попередня</button><span class="card-hint">Натисни на картку, щоб перевернути</span><button class="button primary" onclick="nextCard()">Наступна →</button></div>
+    </section>
+
+    <section id="sec-examples" hidden>
+      <div class="section-heading"><div><span class="eyebrow">Теорія в дії</span><h2>Коротко й наочно</h2></div><p>Кілька опорних прикладів, які допоможуть пригадати алгоритм.</p></div>
+      <div class="examples-grid">
+        <article class="panel example-card">
+          <span class="tag">Операції</span><h3>Обчислення mod*</h3>
+          <p>Знаходимо залишок. Якщо ділення націло — замість нуля записуємо дільник.</p>
+          <div class="code">15 mod* 3 = 3<br>15 mod* 4 = 3<br>3 mod* 7 = 3</div>
+          <p style="margin-bottom:0">У першому прикладі звичайний залишок — 0, тому відповідь дорівнює 3.</p>
+        </article>
+        <article class="panel example-card mint">
+          <span class="tag">Nivel 3 · Індукція</span><h3>Доведення формули</h3>
+          <p><b>Твердження:</b> 1 + 2 + 2² + … + 2ⁿ = 2ⁿ⁺¹ − 1.</p>
+          <p><b>База n=1:</b> 1 + 2 = 3 = 2² − 1.</p>
+          <p><b>Припущення n=k:</b> сума до 2ᵏ дорівнює 2ᵏ⁺¹ − 1.</p>
+          <div class="code">(2ᵏ⁺¹ − 1) + 2ᵏ⁺¹<br>= 2ᵏ⁺² − 1</div>
+          <p style="margin-bottom:0">Отже, перехід до k+1 доведено ∎</p>
+        </article>
+        <article class="panel example-card">
+          <span class="tag">Комбінаторика</span><h3>Коли порядок важливий?</h3>
+          <p>Для команди з 2 людей із 5 порядок неважливий: вибираємо сполуку. Для золотої та срібної медалі порядок важливий: це розміщення.</p>
+          <div class="code">C₅² = 5!/(2!·3!) = 10<br>A₅² = 5·4 = 20</div>
+          <p style="margin-bottom:0">Питання-підказка: чи змінюється результат, якщо поміняти обрані елементи місцями?</p>
+        </article>
+        <article class="panel example-card mint">
+          <span class="tag">Графи</span><h3>Степені вершин</h3>
+          <p>Степінь вершини — кількість ребер, що до неї прилягають. Якщо порахувати степені всіх вершин, кожне ребро буде враховане двічі.</p>
+          <div class="code">Σ deg(v) = 2|E|<br>Степені: 1, 2, 2, 1 → сума 6<br>Отже, ребер: 6/2 = 3</div>
+          <p style="margin-bottom:0">Це твердження відоме як лема про рукостискання.</p>
+        </article>
+        <article class="panel example-card">
+          <span class="tag">Підрахунок</span><h3>Включення-виключення</h3>
+          <p>У групі 12 людей вивчають англійську, 9 — німецьку, а 4 — обидві мови. Спільних людей не можна рахувати двічі.</p>
+          <div class="code">12 + 9 − 4 = 17 людей</div>
+          <p style="margin-bottom:0">Для двох скінченних множин: |A∪B|=|A|+|B|−|A∩B|.</p>
+        </article>
+        <article class="panel example-card mint">
+          <span class="tag">Відношення</span><h3>Перевірка еквівалентності</h3>
+          <p>На цілих числах відношення «мають однакову парність» групує числа на парні та непарні.</p>
+          <div class="code">2 ~ 8, бо обидва парні<br>3 ~ 7, бо обидва непарні</div>
+          <p style="margin-bottom:0">Еквівалентність має три властивості: рефлексивність, симетричність і транзитивність.</p>
+        </article>
+      </div>
+      <div class="section-heading"><div><span class="eyebrow">Конспект і розбір</span><h2>Теми з прикладами та розв’язаннями</h2></div><p>У кожній темі є стислий конспект, покроковий приклад і задача для самостійної спроби.</p></div>
+      <div class="topic-notes" id="topic-notes"></div>
+    </section>
+
+    <section id="sec-study" hidden>
+      <div class="section-heading"><div><span class="eyebrow">Підлаштуй під себе</span><h2>Навчайся у своєму режимі</h2></div><p>Обери темп і формат. Тут є коротке повторення, прості пояснення, практика та самоперевірка.</p></div>
+      <div class="study-modes" role="group" aria-label="Навчальні режими">
+        <button class="mode-button active" id="mode-bed" onclick="showStudyMode('bed')"><b>🌙 Перед сном</b><span>Спокійне повторення без перевантаження</span></button>
+        <button class="mode-button" id="mode-five" onclick="showStudyMode('five')"><b>⏱ 5 хвилин</b><span>Один стислий цикл теорії й практики</span></button>
+        <button class="mode-button" id="mode-tired" onclick="showStudyMode('tired')"><b>☁️ Я втомився</b><span>Мінімум тексту, одна думка за раз</span></button>
+        <button class="mode-button" id="mode-quiz" onclick="showStudyMode('quiz')"><b>✳ Тестування</b><span>Перевір себе короткими запитаннями</span></button>
+        <button class="mode-button" id="mode-explain" onclick="showStudyMode('explain')"><b>💬 Поясни сам</b><span>Сформулюй відповідь і звір ключові ідеї</span></button>
+      </div>
+      <div class="panel study-output" id="study-output" aria-live="polite"></div>
+    </section>
+
+    <section id="sec-sim" hidden>
+      <div class="panel sim-panel">
+        <span class="eyebrow">Тренування перед іспитом</span>
+        <h2>Симуляція колоквіуму</h2>
+        <p>Сім хвилин на білет — як у справжніх умовах. Зосередься на головному й запиши план відповіді.</p>
+        <div class="sim-time" id="sim-timer">07:00</div>
+        <button class="button primary" id="sim-btn" onclick="startSim()">Почати симуляцію <span aria-hidden="true">→</span></button>
+      </div>
+      <div id="sim-ticket"></div>
+    </section>
+    <footer>Зроблено для спокійної та впевненої підготовки <span aria-hidden="true">✳</span></footer>
+  </main>
+  </div>
+
+  <script>
+    const D = [
+      [1, 1, "Підмножина", "Множина A називається <b>підмножиною</b> множини B (позначається A ⊆ B), якщо кожен елемент множини A є водночас елементом множини B.<br><b>Формальний опис:</b> A ⊆ B ⇔ ∀x (x ∈ A ⇒ x ∈ B)."],
+      [1, 2, "Власна підмножина", "Множина A називається <b>власною (строгою) підмножиною</b> множини B (позначається A ⊂ B), якщо A є підмножиною B і при цьому A не дорівнює B (тобто у множині B існує хоча б один елемент, який не належить A; іноді також вимагають A ≠ ∅).<br><b>Формальний опис:</b> A ⊂ B ⇔ (A ⊆ B та A ≠ B)."],
+      [1, 3, "Порожня множина", "<b>Порожньою множиною</b> називається множина, яка не містить жодного елемента. Позначається символом ∅. Порожня множина є підмножиною будь-якої множини (∀A : ∅ ⊆ A)."],
+      [1, 4, "Універсальна множина", "<b>Універсальною множиною</b> (позначається X або U) називається множина всіх елементів, які розглядаються в межах даної задачі (певного контексту). Усі множини, що розглядаються в цій задачі, є підмножинами універсальної множини."],
+      [1, 5, "Перетин множин", "<i>(Зараховується словесне означення або формальний опис; діаграми та кружечки НЕ зараховуються!)</i><br><b>Словесне означення:</b> Перетином множин A і B називається множина, яка складається з усіх тих і тільки тих елементів, які належать одночасно і множині A, і множині B.<br><b>Формальний опис:</b> A ∩ B = {x | x ∈ A, x ∈ B} (або {x | x ∈ A і x ∈ B})."],
+      [1, 6, "Об’єднання множин", "<i>(Зараховується словесне означення або формальний опис; діаграми та кружечки НЕ зараховуються!)</i><br><b>Словесне означення:</b> Об’єднанням множин A і B називається множина, яка складається з усіх тих і тільки тих елементів, які належать хоча б одній із множин A або B.<br><b>Формальний опис:</b> A ∪ B = {x | x ∈ A або x ∈ B}."],
+      [1, 7, "Різниця множин", "<i>(Зараховується словесне означення або формальний опис; діаграми та кружечки НЕ зараховуються!)</i><br><b>Словесне означення:</b> Різницею множин A і B називається множина, яка складається з усіх тих і тільки тих елементів, які належать множині A, але не належать множині B.<br><b>Формальний опис:</b> A \\ B = {x | x ∈ A, x ∉ B}."],
+      [1, 8, "Симетрична різниця множин", "<i>(Зараховується словесне означення або формальний опис; діаграми та кружечки НЕ зараховуються!)</i><br><b>Словесне означення:</b> Симетричною різницею множин A і B називається множина, яка складається з усіх тих і тільки тих елементів, які належать рівно одній із множин A або B (тобто належать об’єднанню A ∪ B, але не належать перетину A ∩ B).<br><b>Формальний опис:</b> A Δ B = (A \\ B) ∪ (B \\ A) = (A ∪ B) \\ (A ∩ B) = {x | (x ∈ A і x ∉ B) або (x ∈ B і x ∉ A)}."],
+      [1, 9, "Асоціативність перетину та об’єднання", "<i>(Достатньо записати формули, що відповідають цим властивостям)</i><br>• <b>Асоціативність перетину:</b> (A ∩ B) ∩ C = A ∩ (B ∩ C)<br>• <b>Асоціативність об’єднання:</b> (A ∪ B) ∪ C = A ∪ (B ∪ C)"],
+      [1, 10, "Дистрибутивність об’єднання відносно перетину та навпаки", "<i>(Достатньо записати формули, що відповідають цим властивостям)</i><br>• <b>Дистрибутивність об’єднання відносно перетину:</b> A ∪ (B ∩ C) = (A ∪ B) ∩ (A ∪ C)<br>• <b>Дистрибутивність перетину відносно об’єднання:</b> A ∩ (B ∪ C) = (A ∩ B) ∪ (A ∩ C)"],
+      [1, 11, "Декартів добуток множин (двох і k)", "<i>(Обов’язково розписати і для двох множин A × B, і для k множин A₁ × A₂ × … × Aₖ!)</i><br>• <b>Декартів добуток двох множин A і B:</b> це множина всіх можливих упорядкованих пар (a, b), у яких перша компонента належить множині A, а друга — множині B:<br>A × B = {(a, b) | a ∈ A, b ∈ B}.<br>• <b>Декартів добуток k множин A₁, A₂, …, Aₖ:</b> це множина всіх можливих упорядкованих наборів (кортежів) довжини k вигляду (a₁, a₂, …, aₖ), де i-та компонента належить множині Aᵢ для кожного i = 1, 2, …, k:<br>A₁ × A₂ × … × Aₖ = {(a₁, a₂, …, aₖ) | a₁ ∈ A₁, a₂ ∈ A₂, …, aₖ ∈ Aₖ}."],
+      [1, 12, "Кортеж", "<b>Кортежем</b> (упорядкованим набором) довжини k називається скінченна упорядкована послідовність елементів (a₁, a₂, …, aₖ), у якій порядок розташування елементів є важливим, а самі елементи (компоненти/координати кортежу) можуть повторюватися.<br>Два кортежі (a₁, a₂, …, aₖ) і (b₁, b₂, …, bₘ) рівні тоді й лише тоді, коли k = m та aᵢ = bᵢ для всіх i = 1, …, k."],
+      [1, 13, "Перестановка та формула Pₙ", "<i>(Обов’язково написати і означення перестановки, і формулу Pₙ — лише формула дає половину балів!)</i><br>• <b>Означення:</b> Перестановкою з n елементів називається будь-який упорядкований набір (кортеж), утворений з усіх n різних елементів даної n-елементної множини (перестановки відрізняються між собою лише порядком слідування елементів).<br>• <b>Формула кількості перестановок:</b> Pₙ = n! = 1 · 2 · 3 · … · n (причому P₀ = 0! = 1)."],
+      [1, 14, "Розміщення k елементів з n", "<i>(Потрібно написати саме означення того, що таке розміщення, а не лише формулу Aₙᵏ!)</i><br><b>Означення:</b> Розміщенням із n елементів по k називається будь-який <b>упорядкований набір (кортеж)</b> із k різних елементів, обраних із даної n-елементної множини (порядок обраних елементів <b>важливий</b>: два розміщення вважаються різними, якщо вони відрізняються або складом елементів, або порядком їх розташування)."],
+      [1, 15, "Сполука k елементів з n", "<i>(Потрібно написати саме означення того, що таке сполука, а не лише формулу Cₙᵏ!)</i><br><b>Означення:</b> Сполукою (комбінацією) з n елементів по k називається будь-яка <b>неупорядкована k-елементна підмножина</b>, обрана з даної n-елементної множини (порядок обраних елементів <b>не важливий</b>: дві сполуки вважаються різними лише тоді, коли вони відрізняються складом елементів, тобто хоча б одним елементом)."],
+      [1, 16, "Перша властивість біноміальних коефіцієнтів", "<i>(Лише формулювання, без доведення)</i><br>Властивість симетрії біноміальних коефіцієнтів: для будь-яких цілих n ≥ 0 та 0 ≤ k ≤ n виконується рівність:<br><b>Cₙᵏ = Cₙⁿ⁻ᵏ</b>."],
+      [1, 17, "Четверта властивість біноміальних коефіцієнтів. (знакозмінна сума \"С – шек\")", "<i>(Лише формулювання, без доведення)</i><br>Знакозмінна сума біноміальних коефіцієнтів для будь-якого натурального n ≥ 1 дорівнює нулю:<br><b>Cₙ⁰ − Cₙ¹ + Cₙ² − Cₙ³ + … + (−1)ⁿ Cₙⁿ = ∑<sub>k=0</sub>ⁿ (−1)ᵏ Cₙᵏ = 0</b>."],
+      [1, 18, "Значення Cₙᵏ для k = 0, 1, n − 1, n та k > n", "<i>(Потрібно записати готові значення без розписування через факторіали; не забути про k = n − 1!)</i><br>• при <b>k = 0</b>: Cₙ⁰ = 1;<br>• при <b>k = 1</b>: Cₙ¹ = n;<br>• при <b>k = n − 1</b>: Cₙⁿ⁻¹ = n <i>(за першою властивістю Cₙⁿ⁻¹ = Cₙ¹ = n)</i>;<br>• при <b>k = n</b>: Cₙⁿ = 1;<br>• при <b>k > n</b>: Cₙᵏ = 0."],
+      [1, 19, "Відповідність між множинами A і B", "<b>Відповідністю</b> між множинами A і B називається будь-яка підмножина C декартового добутку A × B:<br><b>C ⊆ A × B</b>.<br>Якщо пара (a, b) ∈ C, то кажуть, що елемент b ∈ B відповідає елементу a ∈ A при відповідності C."],
+      [1, 20, "i – та проекція кортежу та i – та проекція підмножини декартового добутку A₁ × A₂ × … × Aₖ", "• <b>i-та проекція кортежу:</b> Для кортежу (a₁, a₂, …, aᵢ, …, aₖ) ∈ A₁ × A₂ × … × Aₖ його i-тою проекцією називається його i-та компонента aᵢ:<br>Prᵢ(a₁, a₂, …, aₖ) = aᵢ.<br>• <b>i-та проекція підмножини декартового добутку:</b> Для підмножини C ⊆ A₁ × A₂ × … × Aₖ її i-тою проекцією називається множина всіх i-тих проекцій кортежів, які належать множині C:<br>PrᵢC = {Prᵢ(x) | x ∈ C} = {aᵢ ∈ Aᵢ | ∃a₁ ∈ A₁ … ∃a<sub>i−1</sub> ∈ A<sub>i−1</sub> ∃a<sub>i+1</sub> ∈ A<sub>i+1</sub> … ∃aₖ ∈ Aₖ : (a₁, …, aᵢ, …, aₖ) ∈ C}.<br><i>(Зокрема, при k = 2 для C ⊆ A × B: Pr₁C = {a ∈ A | ∃b ∈ B : (a, b) ∈ C}, Pr₂C = {b ∈ B | ∃a ∈ A : (a, b) ∈ C}).</i>"],
+      [1, 21, "Образ та прообраз елемента при відповідності C між A і B", "<i>(Потрібні саме формальні означення!)</i><br>Нехай C ⊆ A × B — відповідність між множинами A і B.<br>• <b>Образом елемента a ∈ A</b> при відповідності C називається множина всіх елементів b ∈ B, які відповідають елементу a:<br><b>C(a) = {b ∈ B | (a, b) ∈ C}</b>.<br><i>(Образ підмножини X ⊆ A: C(X) = {b ∈ B | ∃a ∈ X : (a, b) ∈ C}).</i><br>• <b>Прообразом елемента b ∈ B</b> при відповідності C називається множина всіх елементів a ∈ A, яким відповідає елемент b:<br><b>C⁻¹(b) = {a ∈ A | (a, b) ∈ C}</b>.<br><i>(Прообраз підмножини Y ⊆ B: C⁻¹(Y) = {a ∈ A | ∃b ∈ Y : (a, b) ∈ C}).</i>"],
+      [1, 22, "Функціональна та усюди визначена відповідність", "<i>(Потрібен саме формальний опис з останньої колонки таблиці; неформальне пояснення через стрілочки дає лише 0,5 бала!)</i><br>Нехай C ⊆ A × B — відповідність між A і B.<br>• <b>Функціональна відповідність (функція):</b> кожному елементу a ∈ A відповідає <i>не більше одного</i> елемента b ∈ B.<br><b>Формальний опис:</b> ∀a ∈ A : |C(a)| ≤ 1, або через квантори:<br><b>∀a ∈ A ∀b₁, b₂ ∈ B : ((a, b₁) ∈ C ∧ (a, b₂) ∈ C) ⇒ b₁ = b₂</b>.<br>• <b>Усюди (повністю) визначена відповідність:</b> кожному елементу a ∈ A відповідає <i>хоча б один</i> елемент b ∈ B.<br><b>Формальний опис:</b> <b>Pr₁C = A</b> (або ∀a ∈ A : C(a) ≠ ∅, або ∀a ∈ A : |C(a)| ≥ 1), або через квантори:<br><b>∀a ∈ A ∃b ∈ B : (a, b) ∈ C</b>."],
+      [1, 23, "Ін’єктивна та сюр’єктивна відповідність", "<i>(Потрібен саме формальний опис з останньої колонки таблиці; неформальне пояснення через стрілочки дає лише 0,5 бала!)</i><br>Нехай C ⊆ A × B — відповідність між A і B.<br>• <b>Ін’єктивна відповідність (ін’єкція):</b> кожному елементу b ∈ B відповідає (як прообраз) <i>не більше одного</i> елемента a ∈ A (різним елементам з A не може відповідати один і той самий елемент з B).<br><b>Формальний опис:</b> ∀b ∈ B : |C⁻¹(b)| ≤ 1, або через квантори:<br><b>∀a₁, a₂ ∈ A ∀b ∈ B : ((a₁, b) ∈ C ∧ (a₂, b) ∈ C) ⇒ a₁ = a₂</b>.<br>• <b>Сюр’єктивна відповідність (сюр’єкція):</b> кожен елемент b ∈ B має <i>хоча б один</i> прообраз a ∈ A.<br><b>Формальний опис:</b> <b>Pr₂C = B</b> (або ∀b ∈ B : C⁻¹(b) ≠ ∅, або ∀b ∈ B : |C⁻¹(b)| ≥ 1), або через квантори:<br><b>∀b ∈ B ∃a ∈ A : (a, b) ∈ C</b>."],
+      [2, 1, "Навести приклад нескінченних множин, перетин яких скінченний, та приклад двох нескінченних множин, перетин яких нескінченний", "<b>Приклад, коли скінченний:</b> A = {x ∈ ℝ | x ≥ 0}, B = {x ∈ ℝ | x ≤ 0}, A ∩ B = {0};<br><b>Приклад, коли нескінченний:</b> A = ℕ = {1, 2, 3, …}, B = {2, 4, 6, …}, A ∩ B = {2, 4, 6, …}."],
+      [2, 2, "Навести приклад, коли A × B = B × A, та приклад, коли A × B ≠ B × A", "<b>Приклад рівності (A × B = B × A):</b> A = {1, 2}, B = {1, 2}, A × B = {(1, 1), (1, 2), (2, 1), (2, 2)}, B × A = {(1, 1), (1, 2), (2, 1), (2, 2)};<br><b>Приклад нерівності (A × B ≠ B × A):</b> A = {1}, B = {2}, A × B = {(1, 2)}, B × A = {(2, 1)}."],
+      [2, 3, "Навести приклад, коли наступне твердження виконується, та приклад, коли наступне твердження НЕ виконується: A ⊆ B, B ∈ C ⇒ A ⊆ C", "<b>Приклад, коли виконується:</b> A = {1}, B = {1}, C = {1, {1}};<br><b>Приклад, коли НЕ виконується:</b> A = {1}, B = {1, 2}, C = {{1, 2}}."],
+      [2, 4, "Навести приклад таких множин, що A ⊆ B&#772; та B ⊆ A&#772;", "A = {1}, B = {2}, універсальна множина X = {1, 2, 3}, A&#772; = {2, 3}, B&#772; = {1, 3} (тоді A ⊆ B&#772; та B ⊆ A&#772;)."],
+      [2, 5, "Навести приклад, коли наступне твердження виконується, та приклад, коли наступне твердження НЕ виконується: A ∩ B ⊆ C ⇒ A ⊆ C та B ⊆ C", "<b>Приклад, коли виконується:</b> A = {1}, B = {1, 2}, C = {1, 2, 3};<br><b>Приклад, коли НЕ виконується:</b> A = {1, 2}, B = {2, 3}, C = {2} (I тв. A ∩ B = {2} ⊆ C виконується, а II та III: A ⊆ C і B ⊆ C — НЕ виконуються)."],
+      [2, 6, "Навести приклад такої множини A, що A ∈ A", "Це завдання розбирається на консультації, бо це пов’язано з парадоксом теорії множин, який ми НЕ розбирали.<br><b>Що писати НЕ треба:</b> A = {A, B, C} — ось такий запис не спрацює, бо незрозуміло, чому так можна."],
+      [2, 7, "Навести приклад відповідності, яка буде функцією та сюр’єкцією, але при цьому НЕ буде відображенням та НЕ буде ін’єкцією", "A = {1, 2, 3, 4}, B = {a, b}, C = {(1, a), (2, a), (3, b)}."],
+      [2, 8, "Результати операцій ∪, ∩, \\, Δ з порожньою множиною та універсальною множиною (A ∩ ∅, A ∩ X і т.д.)", "A ∪ ∅ = A; A ∩ ∅ = ∅; A \\ ∅ = A; ∅ \\ A = ∅; A Δ ∅ = A;<br>A ∪ X = X; A ∩ X = A; A \\ X = ∅; X \\ A = A&#772;; A Δ X = A&#772;."],
+      [2, 9, "A = {a, b, c, d, e}, B = {1, 2, 3, 4, 5}. Навести приклад такої відповідності C між A і B, що Pr₁C = {a, c, d}, C⁻¹({4, 5}) = {c}", "C = {(a, 1), (c, 4), (c, 5), (d, 2)}."],
+      [3, 1, "Формула Aₙᵏ", "<b>Що рахує формула:</b> кількість розміщень із n різних елементів по k (кількість упорядкованих k-елементних наборів з n-елементної множини, де порядок елементів важливий).<br><b>Формула:</b> Aₙᵏ = n(n − 1)(n − 2)…(n − k + 1) = n! / (n − k)!. <br><b>Доведення:</b> Маємо k упорядкованих місць. На 1-ше місце можна обрати будь-який із n елементів (n способів), на 2-ге місце — будь-який із решти n − 1 елементів (n − 1 способів), …, на k-те місце — будь-який із n − (k − 1) = n − k + 1 елементів. <b>За правилом добутку</b> загальна кількість способів заповнити всі k місць дорівнює Aₙᵏ = n · (n − 1) · … · (n − k + 1). Домноживши і поділивши цей добуток на (n − k)!, дістаємо: Aₙᵏ = [n(n − 1)…(n − k + 1) · (n − k)!] / (n − k)! = n! / (n − k)!."],
+      [3, 2, "Чому ММІ працює", "<b>Що саме пояснюємо:</b> Нехай ми розв’язували задачу за методом математичної індукції (ММІ) і всі 4 етапи реалізовані — чому тоді задача розв’язана (тобто чому твердження P(n) виконується для кожного натурального n)?<br><b>Пояснення / доведення:</b> З 1-го етапу (бази індукції) ми знаємо, що твердження істинне при n = 1 (тобто P(1) — істинне). У 3-му етапі (індукційному переході) доведено, що для довільного k з істинності P(k) випливає істинність P(k + 1). Тоді: при k = 1, оскільки P(1) істинне, за переходом істинним є P(2); при k = 2, оскільки P(2) вже істинне, за переходом істинним є P(3); продовжуючи цей ланцюжок P(1) ⇒ P(2) ⇒ P(3) ⇒ … ⇒ P(n), за скінченну кількість кроків ми дійдемо до будь-якого натурального n. Отже, твердження справді виконується для всіх n ≥ 1, тому задача розв’язана."],
+      [3, 3, "Метод мат. індукції (описати шаблон)", "<b>1. База індукції:</b> перевіряємо, що твердження виконується для найменшого допустимого значення n (зазвичай n = 1).<br><b>2. Індукційне припущення:</b> припускаємо, що твердження є істинним для деякого n = k.<br><b>3. Індукційний перехід (крок індукції):</b> доводимо, що твердження виконується для n = k + 1, причому під час доведення <b>обов’язково користуємось індукційним припущенням</b> (для n = k) і вказуємо, де саме його використали.<br><b>4. Висновок:</b> на основі принципу математичної індукції робимо висновок, що твердження істинне для всіх натуральних n."],
+      [3, 4, "Друга властивість біноміальних коефіцієнтів, обидва доведення", "<b>Формула (тотожність Паскаля):</b> Cₙᵏ⁻¹ + Cₙᵏ = Cₙ₊₁ᵏ (або Cₙᵏ + Cₙᵏ⁺¹ = Cₙ₊₁ᵏ⁺¹).<br><b>1) Алгебраїчне доведення:</b><br>Cₙᵏ⁻¹ + Cₙᵏ = n! / [(k − 1)!(n − k + 1)!] + n! / [k!(n − k)!].<br>Оскільки k! = k · (k − 1)! та (n − k + 1)! = (n − k + 1) · (n − k)!, зводимо дроби до спільного знаменника k!(n − k + 1)!:<br>= [n! · k] / [k · (k − 1)!(n − k + 1)!] + [n! · (n − k + 1)] / [k!(n − k + 1) · (n − k)!]<br>= [n! · k + n! · (n − k + 1)] / [k!(n − k + 1)!]<br>= [n! · (k + n − k + 1)] / [k!(n − k + 1)!]<br>= [n! · (n + 1)] / [k!(n + 1 − k)!] = (n + 1)! / [k!((n + 1) − k)!] = Cₙ₊₁ᵏ.<br><b>2) Комбінаторне доведення:</b><br>Нехай є n + 1 людей, серед яких виділимо одного конкретного персонажа. Кількість способів обрати з n + 1 людей групу з k осіб дорівнює Cₙ₊₁ᵏ. З іншого боку, всі такі групи з k осіб поділяються на два класи, що не перетинаються:<br>• <i>групи з цим персонажем:</i> персонаж уже обраний, тому до нього треба дообрати ще k − 1 осіб із решти n людей — таких груп Cₙᵏ⁻¹;<br>• <i>групи без цього персонажа:</i> усі k осіб обираємо з решти n людей — таких груп Cₙᵏ.<br>За правилом суми: Cₙᵏ⁻¹ + Cₙᵏ = Cₙ₊₁ᵏ."],
+      [3, 5, "Біном Ньютона", "<b>«Доросле» формулювання (з ∑):</b> (a + b)ⁿ = ∑<sub>k=0</sub>ⁿ Cₙᵏ aⁿ⁻ᵏ bᵏ.<br><b>«Дитяче» формулювання:</b> (a + b)ⁿ = Cₙ⁰ aⁿ + Cₙ¹ aⁿ⁻¹b + Cₙ² aⁿ⁻²b² + … + Cₙⁿ⁻¹ abⁿ⁻¹ + Cₙⁿ bⁿ.<br><b>Доведення:</b> Запишемо (a + b)ⁿ = (a + b)(a + b)…(a + b) (n дужок). При розкритті дужок кожен доданок утворюється вибором з кожної із n дужок або a, або b. Щоб утворився доданок aⁿ⁻ᵏ bᵏ, треба рівно з k дужок із n обрати b (тоді з решти n − k дужок автоматично обирається a). Оскільки порядок вибору дужок не важливий, кількість таких способів дорівнює Cₙᵏ. Зводячи подібні доданки для всіх k від 0 до n, дістаємо формулу бінома Ньютона.<br><b>Приклад для (a + b)⁵:</b><br>(a + b)⁵ = C₅⁰ a⁵ + C₅¹ a⁴b + C₅² a³b² + C₅³ a²b³ + C₅⁴ ab⁴ + C₅⁵ b⁵."],
+      [3, 6, "Третя властивість біноміальних коефіцієнтів, обидва доведення", "<b>Формула:</b> ∑<sub>k=0</sub>ⁿ Cₙᵏ = Cₙ⁰ + Cₙ¹ + Cₙ² + … + Cₙⁿ = 2ⁿ.<br><b>1) Алгебраїчне доведення (через біном Ньютона):</b><br>Запишемо біном Ньютона: (a + b)ⁿ = Cₙ⁰ aⁿ + Cₙ¹ aⁿ⁻¹b + Cₙ² aⁿ⁻²b² + … + Cₙⁿ bⁿ.<br>Підставимо a = 1 та b = 1:<br>(1 + 1)ⁿ = Cₙ⁰ · 1ⁿ + Cₙ¹ · 1ⁿ⁻¹ · 1 + … + Cₙⁿ · 1ⁿ ⇒ 2ⁿ = Cₙ⁰ + Cₙ¹ + Cₙ² + … + Cₙⁿ.<br><b>2) Комбінаторне доведення:</b><br>Порахуємо кількість усіх підмножин n-елементної множини двома способами:<br>• <i>1-й спосіб:</i> для кожного з n елементів є 2 варіанти (включити його у підмножину чи ні), тому за правилом добутку всього є 2 · 2 · … · 2 = 2ⁿ підмножин.<br>• <i>2-й спосіб:</i> кількість підмножин розміру 0 дорівнює Cₙ⁰, розміру 1 — Cₙ¹, …, розміру k — Cₙᵏ, …, розміру n — Cₙⁿ. За правилом суми всього підмножин Cₙ⁰ + Cₙ¹ + … + Cₙⁿ.<br>Прирівнюючи обидва результати, отримуємо Cₙ⁰ + Cₙ¹ + … + Cₙⁿ = 2ⁿ."],
+      [3, 7, "Формула Cₙᵏ", "<b>Що рахує формула:</b> кількість сполук із n різних елементів по k (кількість неупорядкованих k-елементних підмножин з n-елементної множини, де порядок елементів не важливий).<br><b>Формула:</b> Cₙᵏ = Aₙᵏ / Pₖ = n! / [k!(n − k)!].<br><b>Доведення:</b> Щоб утворити упорядковане розміщення з k елементів (їх кількість дорівнює Aₙᵏ), можна спочатку обрати неупорядковану підмножину з k елементів (Cₙᵏ способів), а потім упорядкувати ці k елементів між собою (Pₖ = k! способів). <b>За правилом добутку</b> маємо: Aₙᵏ = Cₙᵏ · Pₖ = Cₙᵏ · k!. Звідси Cₙᵏ = Aₙᵏ / k!. Підставляючи формулу Aₙᵏ = n! / (n − k)!, отримуємо: Cₙᵏ = n! / [k!(n − k)!]."],
+      [4, 1, "Нерівність Бернуллі", "<b>Формулювання:</b> Нехай x ∈ ℝ, x ≥ −1. Тоді для всіх n ∈ ℕ виконується нерівність: (1 + x)ⁿ ≥ 1 + nx.<br><br><b>Доведення (за ММІ):</b><br><b>1. База індукції:</b> Перевіримо істинність твердження при n = 1:<br>Ліва частина: (1 + x)¹ = 1 + x. Права частина: 1 + 1 · x = 1 + x.<br>Оскільки 1 + x ≥ 1 + x (виконується рівність), при n = 1 твердження істинне.<br><b>2. Індукційне припущення:</b> Припустимо, що при n = k (k ∈ ℕ) твердження є істинним, тобто виконується нерівність:<br>(1 + x)ᵏ ≥ 1 + kx.<br><b>3. Індукційний перехід:</b> Доведемо, що тоді при n = k + 1 твердження також є істинним, тобто виконується нерівність:<br>(1 + x)ᵏ⁺¹ ≥ 1 + (k + 1)x.<br>Перетворимо ліву частину та застосуємо індукційне припущення:<br>(1 + x)ᵏ⁺¹ = (1 + x)ᵏ · (1 + x) ≥ (1 + kx)(1 + x).<br><b>Зауваження (де використовується умова x ≥ −1, 1,5 бала):</b> Цей перехід (домноження обох частин нерівності (1 + x)ᵏ ≥ 1 + kx на вираз (1 + x) зі збереженням знака «≥») є правомірним саме тому, що за умовою <b>x ≥ −1 ⇒ 1 + x ≥ 0</b> (множник невід’ємний, тому знак нерівності не змінюється).<br>Розкриємо дужки:<br>(1 + kx)(1 + x) = 1 + x + kx + kx² = 1 + (k + 1)x + kx² ≥ 1 + (k + 1)x,<br>оскільки k ∈ ℕ (k > 0) та x² ≥ 0 для будь-якого x ∈ ℝ, тому доданок kx² ≥ 0.<br>Отже, (1 + x)ᵏ⁺¹ ≥ 1 + (k + 1)x — індукційний перехід доведено.<br><b>4. Висновок:</b> За принципом математичної індукції нерівність (1 + x)ⁿ ≥ 1 + nx виконується для всіх n ∈ ℕ при x ≥ −1."],
+      [4, 2, "Поліноміальний коефіцієнт та тв. 2", "<b>Розбаловка:</b> Поліноміальний коефіцієнт — 4 бали (формулювання та формула — 1 б., доведення — 3 б.); Твердження 2 — 2 бали (формулювання — 1 б., доведення — 1 б.).<br><br><b>І. Поліноміальний коефіцієнт</b><br><b>Формулювання задачі та підсумкова формула (1 бал):</b><br>Нехай дано скінченну множину A з n елементів (|A| = n) та цілі невід’ємні числа k₁, k₂, k₃, …, kₘ такі, що k₁ + k₂ + k₃ + … + kₘ = n. Кількість способів розбити множину A на m упорядкованих попарно неперетинних підмножин A₁, A₂, A₃, …, Aₘ потужностей |A₁| = k₁, |A₂| = k₂, |A₃| = k₃, …, |Aₘ| = kₘ (де порядок підмножин важливий, а порядок елементів усередині кожної підмножини — ні) називається поліноміальним коефіцієнтом і обчислюється за формулою:<br>Pₙ(k₁, k₂, …, kₘ) = Cₙ(k₁, k₂, …, kₘ) = n! / (k₁! · k₂! · k₃! · … · kₘ!).<br><br><b>Доведення формули (3 бали):</b><br>Будемо обирати підмножини A₁, A₂, A₃, …, Aₘ послідовно:<br>• Множину A₁ (k₁ елементів із n елементів множини A) можна обрати Cₙ<sup>k₁</sup> = n! / [k₁!(n − k₁)!] способами.<br>• Множину A₂ (k₂ елементів із решти n − k₁ елементів) можна обрати C<sub>n−k₁</sub><sup>k₂</sup> = (n − k₁)! / [k₂!(n − k₁ − k₂)!] способами.<br>• Множину A₃ (k₃ елементів із решти n − k₁ − k₂ елементів) можна обрати C<sub>n−k₁−k₂</sub><sup>k₃</sup> = (n − k₁ − k₂)! / [k₃!(n − k₁ − k₂ − k₃)!] способами.<br>• …<br>• Множину Aₘ (kₘ елементів із решти n − k₁ − k₂ − … − k<sub>m−1</sub> елементів) можна обрати C<sub>n−k₁−…−k<sub>m−1</sub></sub><sup>kₘ</sup> = (n − k₁ − … − k<sub>m−1</sub>)! / [kₘ!(n − k₁ − k₂ − … − kₘ)!] способами.<br>За <b>правилом добутку</b> загальна кількість способів дорівнює:<br>Pₙ(k₁, k₂, …, kₘ) = Cₙ<sup>k₁</sup> · C<sub>n−k₁</sub><sup>k₂</sup> · C<sub>n−k₁−k₂</sub><sup>k₃</sup> · … · C<sub>n−k₁−…−k<sub>m−1</sub></sub><sup>kₘ</sup> =<br>= [n! / (k₁!(n − k₁)!)] · [(n − k₁)! / (k₂!(n − k₁ − k₂)!)] · [(n − k₁ − k₂)! / (k₃!(n − k₁ − k₂ − k₃)!)] · … · [(n − k₁ − … − k<sub>m−1</sub>)! / (kₘ!(n − k₁ − k₂ − … − kₘ)!)].<br>Скорочуючи однакові множники (n − k₁)!, (n − k₁ − k₂)!, …, (n − k₁ − … − k<sub>m−1</sub>)! у чисельнику та знаменнику сусідніх дробів, отримуємо:<br>= n! / [k₁! · k₂! · k₃! · … · kₘ! · (n − k₁ − k₂ − … − kₘ)!].<br><b>Важливо:</b> Оскільки за умовою k₁ + k₂ + … + kₘ = n, то n − k₁ − k₂ − … − kₘ = 0, а отже множник <b>(n − k₁ − k₂ − … − kₘ)! зникає, бо це 0! = 1</b>.<br>Остаточно маємо: Pₙ(k₁, k₂, …, kₘ) = n! / (k₁! · k₂! · … · kₘ!).<br><br><b>ІІ. Твердження 2 (Поліноміальна формула / узагальнення бінома Ньютона)</b><br><b>Формулювання (1 бал):</b><br>Для будь-яких дійсних чисел a₁, a₂, …, aₘ та натурального n:<br>(a₁ + a₂ + … + aₘ)ⁿ = ∑<sub>k₁+k₂+…+kₘ=n (kᵢ≥0)</sub> Pₙ(k₁, k₂, …, kₘ) · a₁<sup>k₁</sup> a₂<sup>k₂</sup> … aₘ<sup>kₘ</sup> = ∑<sub>k₁+k₂+…+kₘ=n</sub> [n! / (k₁! k₂! … kₘ!)] · a₁<sup>k₁</sup> a₂<sup>k₂</sup> … aₘ<sup>kₘ</sup>,<br>де сума береться за всіма можливими наборами цілих невід’ємних чисел (k₁, k₂, …, kₘ), які в сумі дають n.<br><i>Розпишемо кілька доданків цієї суми (обов’язково навести 1–2 приклади доданків):</i><br>• при k₁ = n, k₂ = 0, …, kₘ = 0 доданок має вигляд: [n! / (n! · 0! · … · 0!)] · a₁ⁿ a₂⁰ … aₘ⁰ = a₁ⁿ;<br>• при k₁ = n − 1, k₂ = 1, k₃ = 0, …, kₘ = 0 доданок має вигляд: [n! / ((n − 1)! · 1! · 0! · … · 0!)] · a₁ⁿ⁻¹ a₂¹ a₃⁰ … aₘ⁰ = n · a₁ⁿ⁻¹ a₂.<br><br><b>Доведення твердження 2 (1 бал):</b><br>Запишемо (a₁ + a₂ + … + aₘ)ⁿ = (a₁ + a₂ + … + aₘ)(a₁ + a₂ + … + aₘ)…(a₁ + a₂ + … + aₘ) (n дужок). При розкритті дужок кожен доданок утворюється вибором з кожної із n дужок рівно одного доданка aᵢ (i ∈ {1, …, m}). Щоб після зведення подібних отримати одночлен вигляду a₁<sup>k₁</sup> a₂<sup>k₂</sup> … aₘ<sup>kₘ</sup> (де k₁ + k₂ + … + kₘ = n), потрібно з n дужок обрати рівно k₁ дужок, із яких беремо a₁ (множина A₁), із решти обрати k₂ дужок, із яких беремо a₂ (множина A₂), …, і нарешті kₘ дужок, із яких беремо aₘ (множина Aₘ). Кількість способів розбити множину з n дужок на такі m підмножин потужностей k₁, k₂, …, kₘ за доведеним вище дорівнює поліноміальному коефіцієнту Pₙ(k₁, k₂, …, kₘ) = n! / (k₁! k₂! … kₘ!). Сумуючи за всіма можливими наборами (k₁, …, kₘ), де k₁ + … + kₘ = n, дістаємо шукану формулу."],
+      [4, 3, "Формула включення-виключення", "<b>Розбаловка:</b> Формулювання — 1,5 б.; доведення — 4 б.; формула для 4 множин — 0,5 б.<br><br><b>1. Формулювання (1,5 бала):</b><br>Нехай A₁, A₂, …, Aₙ — <b>скінченні множини</b>. Тоді потужність (кількість елементів) їх об’єднання обчислюється за формулою:<br>|A₁ ∪ A₂ ∪ … ∪ Aₙ| = (|A₁| + |A₂| + … + |Aₙ|) − (|A₁ ∩ A₂| + |A₁ ∩ A₃| + … + |A<sub>n−1</sub> ∩ Aₙ|) + (|A₁ ∩ A₂ ∩ A₃| + |A₁ ∩ A₂ ∩ A₄| + … + |A<sub>n−2</sub> ∩ A<sub>n−1</sub> ∩ Aₙ|) − … + (−1)<sup>n−1</sup> |A₁ ∩ A₂ ∩ … ∩ Aₙ|,<br>де беруться:<br>• сума потужностей усіх одиночних множин;<br>• мінус сума потужностей <b>усіх можливих перетинів по 2 множини</b> (зокрема, після |A₁ ∩ A₂| пишемо |A₁ ∩ A₃|, підкреслюючи, що перетинаються всі можливі пари, а не лише «сусідні» множини);<br>• плюс сума потужностей <b>усіх можливих перетинів по 3 множини</b>;<br>• і т.д. зі знакочергуванням до (−1)<sup>n−1</sup> |A₁ ∩ A₂ ∩ … ∩ Aₙ|.<br><br><b>2. Доведення (4 бали):</b><br>Розглянемо розбиття об’єднання A₁ ∪ A₂ ∪ … ∪ Aₙ на елементарні «шматки» (ділянки діаграми Ейлера-Венна). Візьмемо довільний «шматок» (елемент x), який належить <b>рівно s множинам</b> із A₁, A₂, …, Aₙ (1 ≤ s ≤ n).<br>Припустимо для конкретності, що x належить множинам A₁, A₂, …, Aₛ і НЕ належить множинам A<sub>s+1</sub>, …, Aₙ.<br><i>Уточнення:</i> для будь-яких інших «шматків», які належать рівно s іншим множинам, усі міркування є <b>повністю аналогічними</b>.<br>У лівій частині рівності (|A₁ ∪ … ∪ Aₙ|) цей шматок враховується <b>рівно 1 раз</b>.<br>Порахуємо, скільки разів він враховується у правій частині:<br>• У сумі |A₁| + |A₂| + … + |Aₙ| (перетини по 1): шматок входить лише до A₁, A₂, …, Aₛ, тому враховується <b>s = Cₛ¹ разів зі знаком «+»</b>.<br>• У сумі попарних перетинів |Aᵢ ∩ Aⱼ| (по 2): шматок входить лише до тих перетинів Aᵢ ∩ Aⱼ, де обидві множини взяті з {A₁, …, Aₛ}. Таких пар є Cₛ², тому він враховується <b>Cₛ² разів зі знаком «−»</b>.<br>• У сумі потрійних перетинів |Aᵢ ∩ Aⱼ ∩ Aₘ| (по 3): обираємо по 3 множини з {A₁, …, Aₛ}, тому він враховується <b>Cₛ³ разів зі знаком «+»</b>.<br>• <b>…</b> <i>(обов’язково ставимо три крапки для перетинів по 4, 5, …, s − 1 множин!)</i><br>• У перетинах по s множин: шматок входить лише до одного перетину A₁ ∩ A₂ ∩ … ∩ Aₛ, тому враховується <b>Cₛˢ разів зі знаком (−1)<sup>s−1</sup></b>.<br>• <b>Для тих шматків (перетинів), де береться перетин по s + 1 чи більшій кількості множин:</b> оскільки x належить лише s множинам, у будь-якому перетині з s + 1 або більше множин обов’язково знайдеться хоча б одна множина, якій x не належить; тому таким перетинам цей шматок не належить і враховується <b>0 разів</b>.<br><br>Отже, у правій частині цей шматок сумарно враховується:<br>Cₛ¹ − Cₛ² + Cₛ³ − … + (−1)<sup>s−1</sup> Cₛˢ разів.<br><b>Посилання на 4-ту властивість біноміальних коефіцієнтів та її формулювання:</b><br>За четвертою властивістю біноміальних коефіцієнтів знакозмінна сума біноміальних коефіцієнтів дорівнює нулю:<br>Cₛ⁰ − Cₛ¹ + Cₛ² − Cₛ³ + … + (−1)ˢ Cₛˢ = 0.<br>Перенесемо доданки з індексами від 1 до s у праву частину:<br>Cₛ⁰ = Cₛ¹ − Cₛ² + Cₛ³ − … + (−1)<sup>s−1</sup> Cₛˢ.<br>Оскільки Cₛ⁰ = 1, отримуємо:<br>Cₛ¹ − Cₛ² + Cₛ³ − … + (−1)<sup>s−1</sup> Cₛˢ = 1.<br>Тобто кожен шматок, що належить рівно s множинам (s ≥ 1), у правій частині враховується <b>1 раз</b> (як і в лівій).<br><b>Зауваження про шматок, де x НЕ належить жодній з множин A₁, A₂, …, Aₙ:</b> якщо елемент x не належить жодній із множин A₁, …, Aₙ, то він не належить ні їх об’єднанню, ні жодному з перетинів, тому і в лівій, і в правій частинах формули враховується <b>0 разів</b>. Доведення завершено.<br><br><b>3. Повна формула включення-виключення для 4 множин (0,5 бала):</b><br>|A₁ ∪ A₂ ∪ A₃ ∪ A₄| = |A₁| + |A₂| + |A₃| + |A₄| − |A₁ ∩ A₂| − |A₁ ∩ A₃| − |A₁ ∩ A₄| − |A₂ ∩ A₃| − |A₂ ∩ A₄| − |A₃ ∩ A₄| + |A₁ ∩ A₂ ∩ A₃| + |A₁ ∩ A₂ ∩ A₄| + |A₁ ∩ A₃ ∩ A₄| + |A₂ ∩ A₃ ∩ A₄| − |A₁ ∩ A₂ ∩ A₃ ∩ A₄|."],
+      [4, 4, "Нерівність Коші", "<b>Розбаловка:</b> Формулювання — 1 б.; випадок 0 + механічна частина ММІ — 1 б.; перехід ч. І (Бернуллі) — 1,5 б.; перехід ч. ІІ (індукційне припущення) — 1,5 б.; перехід ч. ІІІ (випадок рівності) — 1 б.<br><br><b>1. Формулювання (1 бал):</b><br>Для довільних невід’ємних дійсних чисел a₁, a₂, …, aₙ ≥ 0 (n ∈ ℕ) виконується нерівність:<br>(a₁ + a₂ + … + aₙ) / n ≥ ⁿ√(a₁ a₂ … aₙ),<br>причому <b>рівність досягається тоді й лише тоді, коли a₁ = a₂ = … = aₙ</b>.<br><br><b>2. Зауваження про випадок, коли якась зі змінних 0 + «механічна частина індукції» (1 бал):</b><br>• <b>Зауваження про 0:</b> Якщо хоча б одне з чисел a₁, …, aₙ дорівнює 0, то права частина ⁿ√(a₁…aₙ) = 0, а ліва частина (a₁ + … + aₙ)/n ≥ 0 як сума невід’ємних чисел, тому нерівність очевидна. Рівність 0 = 0 при цьому виконується тоді й лише тоді, коли a₁ + … + aₙ = 0, тобто коли всі a₁ = a₂ = … = aₙ = 0. Тому далі вважаємо, що <b>всі числа строго додатні: a₁, a₂, …, aₙ > 0</b>.<br>• <b>База індукції (перевіряємо і для n = 1, і для n = 2 з випадком рівності!):</b><br>— При <b>n = 1</b>: a₁ / 1 = a₁ та ¹√a₁ = a₁; маємо a₁ ≥ a₁ (рівність для одного числа виконується завжди).<br>— При <b>n = 2</b>: розглянемо різницю (a₁ + a₂)/2 − √(a₁a₂) = (a₁ − 2√(a₁a₂) + a₂)/2 = (√a₁ − √a₂)² / 2 ≥ 0, отже (a₁ + a₂)/2 ≥ √(a₁a₂). <b>Випадок рівності при n = 2:</b> (√a₁ − √a₂)² / 2 = 0 ⇔ √a₁ = √a₂ ⇔ a₁ = a₂.<br>• <b>Індукційне припущення:</b> Припустимо, що при n = k (k ∈ ℕ) для будь-яких a₁, …, aₖ > 0 виконується нерівність:<br>(a₁ + a₂ + … + aₖ) / k ≥ ᵏ√(a₁ a₂ … aₖ),<br>причому <b>рівність досягається тоді й лише тоді, коли a₁ = a₂ = … = aₖ</b>.<br>• <b>Початок індукційного переходу:</b> Доведемо, що при n = k + 1 для будь-яких a₁, …, aₖ, aₖ₊₁ > 0 виконується нерівність:<br>(a₁ + a₂ + … + aₖ + aₖ₊₁) / (k + 1) ≥ ᵏ⁺¹√(a₁ a₂ … aₖ aₖ₊₁),<br>причому <b>рівність досягається тоді й лише тоді, коли a₁ = a₂ = … = aₖ = aₖ₊₁</b>.<br><br><b>3. Доведення переходу, частина І — застосування нерівності Бернуллі (1,5 бала):</b><br>Застосуємо нерівність Бернуллі (1 + x)ᵏ⁺¹ ≥ 1 + (k + 1)x для показника k + 1 та числа:<br>x = [k·aₖ₊₁ − (a₁ + a₂ + … + aₖ)] / [(k + 1)(a₁ + a₂ + … + aₖ)].<br><b>Пояснення, чому x ≥ −1 (обов’язково!):</b><br>Оскільки всі aᵢ > 0 та k ∈ ℕ, перевіримо знак 1 + x (розписуємо перетворення з рамочки на полях):<br>1 + x = 1 + [k·aₖ₊₁ − (a₁ + … + aₖ)] / [(k + 1)(a₁ + … + aₖ)] = [(k + 1)(a₁ + … + aₖ) + k·aₖ₊₁ − (a₁ + … + aₖ)] / [(k + 1)(a₁ + … + aₖ)] = [k(a₁ + a₂ + … + aₖ + aₖ₊₁)] / [(k + 1)(a₁ + a₂ + … + aₖ)] > 0 ⇒ <b>x > −1 ⇒ x ≥ −1</b>.<br>Запишемо нерівність Бернуллі:<br>(1 + [k·aₖ₊₁ − (a₁ + … + aₖ)] / [(k + 1)(a₁ + … + aₖ)])ᵏ⁺¹ ≥ 1 + (k + 1) · [k·aₖ₊₁ − (a₁ + … + aₖ)] / [(k + 1)(a₁ + … + aₖ)].<br>Перетворимо обидві частини (детально розписуємо переходи з рамочок):<br>• <i>Ліва частина:</i> як показано вище, вираз у дужках дорівнює [k(a₁ + … + aₖ₊₁)] / [(k + 1)(a₁ + … + aₖ)], тому в степені k + 1 маємо:<br>[(a₁ + a₂ + … + aₖ₊₁) / (k + 1)]ᵏ⁺¹ · [k / (a₁ + a₂ + … + aₖ)]ᵏ⁺¹.<br>• <i>Права частина:</i> скорочуємо множник (k + 1) і зводимо до спільного знаменника:<br>1 + [k·aₖ₊₁ − (a₁ + … + aₖ)] / (a₁ + … + aₖ) = [(a₁ + … + aₖ) + k·aₖ₊₁ − (a₁ + … + aₖ)] / (a₁ + … + aₖ) = (k · aₖ₊₁) / (a₁ + a₂ + … + aₖ).<br>Отримуємо нерівність:<br>[(a₁ + … + aₖ₊₁) / (k + 1)]ᵏ⁺¹ · [k / (a₁ + … + aₖ)]ᵏ⁺¹ ≥ (k · aₖ₊₁) / (a₁ + … + aₖ).<br><br><b>4. Доведення переходу, частина ІІ — подальші перетворення та індукційне припущення (1,5 бала):</b><br>Помножимо обидві частини нерівності на додатний вираз [(a₁ + a₂ + … + aₖ) / k]ᵏ⁺¹ > 0:<br>[(a₁ + a₂ + … + aₖ₊₁) / (k + 1)]ᵏ⁺¹ ≥ [(k · aₖ₊₁) / (a₁ + … + aₖ)] · [(a₁ + … + aₖ) / k]ᵏ⁺¹.<br>Розпишемо праву частину: [(k · aₖ₊₁) / (a₁ + … + aₖ)] · [(a₁ + … + aₖ) / k] · [(a₁ + … + aₖ) / k]ᵏ = aₖ₊₁ · [(a₁ + a₂ + … + aₖ) / k]ᵏ.<br>Отже:<br>[(a₁ + a₂ + … + aₖ₊₁) / (k + 1)]ᵏ⁺¹ ≥ [(a₁ + a₂ + … + aₖ) / k]ᵏ · aₖ₊₁.<br>Тепер <b>застосуємо індукційне припущення</b> (a₁ + … + aₖ) / k ≥ ᵏ√(a₁…aₖ), піднісши обидві його додатні частини до степеня k: [(a₁ + … + aₖ) / k]ᵏ ≥ a₁ a₂ … aₖ. Тоді:<br>[(a₁ + a₂ + … + aₖ₊₁) / (k + 1)]ᵏ⁺¹ ≥ [(a₁ + a₂ + … + aₖ) / k]ᵏ · aₖ₊₁ ≥ a₁ a₂ … aₖ · aₖ₊₁.<br>Добуваючи корінь (k + 1)-го степеня з обох частин, дістаємо:<br>(a₁ + a₂ + … + aₖ + aₖ₊₁) / (k + 1) ≥ ᵏ⁺¹√(a₁ a₂ … aₖ aₖ₊₁).<br><br><b>5. Доведення переходу, частина ІІІ — випадок рівності (1 бал):</b><br>У ланцюжку нерівностей [(a₁ + … + aₖ₊₁)/(k + 1)]ᵏ⁺¹ ≥ [(a₁ + … + aₖ)/k]ᵏ · aₖ₊₁ ≥ a₁…aₖ aₖ₊₁ рівність між крайніми виразами досягається тоді й лише тоді, коли одночасно виконуються обидві рівності:<br>• У першій нерівності (нерівність Бернуллі при показнику k + 1 ≥ 2) рівність виконується тоді й лише тоді, коли x = 0, тобто:<br>k·aₖ₊₁ − (a₁ + a₂ + … + aₖ) = 0 ⇔ aₖ₊₁ = (a₁ + a₂ + … + aₖ) / k.<br>• У другій нерівності (за індукційним припущенням) рівність виконується тоді й лише тоді, коли:<br>a₁ = a₂ = … = aₖ.<br>Підставляючи a₁ = a₂ = … = aₖ у рівність aₖ₊₁ = (a₁ + … + aₖ) / k = (k · a₁) / k = a₁, отримуємо:<br><b>a₁ = a₂ = … = aₖ = aₖ₊₁</b>.<br><b>Висновок:</b> За принципом математичної індукції нерівність Коші та умова досягнення рівності істинні для всіх n ∈ ℕ."]
+    ];
+
+    const studyTopics = [
+      { title: 'Множини: операції та закони', simple: 'Перетин — спільне, об’єднання — усе без повторів, різниця A\\B — те, що є в A, але немає в B.', example: 'A={1,2,3}, B={3,4}. A∩B={3}; A∪B={1,2,3,4}; A\\B={1,2}; B\\A={4}.', check: 'Перевір: A∩B завжди є підмножиною і A, і B.', keywords: ['перетин', 'об’єднан', 'спіль', 'різниц'], note: 'Множину задають переліком елементів або властивістю. Основні операції: перетин A∩B (елементи обох множин), об’єднання A∪B (хоча б однієї), різниця A\\B (A без елементів B), доповнення Ā=U\\A. Важливо: у множині порядок не важить і повтори не рахуються.', worked: 'Нехай A={1,2,3,5}, B={2,4,5}. Спільні елементи: 2 і 5, тому A∩B={2,5}. Об’єднуємо без повторів: A∪B={1,2,3,4,5}. Викидаємо з A елементи B: A\\B={1,3}.', exercise: 'Для A={a,b,c,d}, B={b,d,e} знайди A∩B, A∪B і B\\A.', solution: 'A∩B={b,d}; A∪B={a,b,c,d,e}; B\\A={e}.', quiz: 0 },
+      { title: 'Підмножини й множина частин', simple: 'A⊆B означає: кожен елемент A належить B. Для скінченної множини з n елементів є 2ⁿ підмножин.', example: 'A={1,2} і B={1,2,3}: A⊆B, але A≠B. Множина частин {1,2} має ∅,{1},{2},{1,2}.', check: '∅ є підмножиною будь-якої множини; A⊂B додатково вимагає A≠B.', keywords: ['підмнож', 'кож', 'елемент', 'порож'], note: 'Підмножина A⊆B, якщо для кожного x виконується x∈A ⇒ x∈B. Власна підмножина A⊂B означає A⊆B і A≠B. Множина всіх підмножин позначається P(A); якщо |A|=n, то |P(A)|=2ⁿ, бо для кожного елемента є два варіанти: включити або ні.', worked: 'Для A={p,q,r}: |A|=3, отже |P(A)|=2³=8. Перелік: ∅,{p},{q},{r},{p,q},{p,r},{q,r},{p,q,r}.', exercise: 'Скільки підмножин має множина {x,y,z,w}? Назви дві власні підмножини.', solution: '2⁴=16 підмножин. Наприклад, ∅ і {x,z} — власні підмножини.', quiz: 1 },
+      { title: 'Комбінаторика: перестановки, розміщення, сполуки', simple: 'Спитай себе: використовуємо всі елементи? Чи важливий порядок? Це визначає формулу.', example: 'Із 5 людей: розсадити всіх — 5!=120; обрати голову й заступника — 5·4=20; обрати команду з двох — C(5,2)=10.', check: 'Порядок важливий у розміщенні, але не важливий у сполуці.', keywords: ['поряд', 'вибр', 'факторіал', 'сполук'], note: 'Перестановки: Pₙ=n! — упорядковуємо всі n елементів. Розміщення: Aₙᵏ=n!/(n−k)! — вибираємо k із n і враховуємо порядок. Сполуки: Cₙᵏ=n!/[k!(n−k)!] — вибираємо k, порядок не має значення. Факторіал n!=1·2·…·n, 0!=1.', worked: 'З 7 студентів обирають старосту і помічника: ролі різні, тому порядок важливий. A₇²=7!/(7−2)!=7·6=42 способи. Якщо просто обрати двох чергових: C₇²=7·6/2=21.', exercise: 'З 6 книжок обери 2 для подарунка (порядок неважливий). Скільки способів?', solution: 'C₆²=6!/(2!·4!)=(6·5)/2=15 способів.', quiz: 2 },
+      { title: 'Математична індукція', simple: 'Доміно: доведи базовий випадок, а потім — що істинність для k тягне істинність для k+1.', example: '1+2+…+n=n(n+1)/2. База n=1: 1=1. Перехід: додаємо k+1 до k(k+1)/2.', check: 'У переході явно підстав припущення для k і покажи саме потрібну формулу для k+1.', keywords: ['баз', 'припущ', 'k+1', 'перехід'], note: 'Структура доказу: (1) база n=n₀; (2) індукційне припущення — твердження істинне для n=k; (3) перехід — використовуючи припущення, довести його для k+1; (4) висновок для всіх n≥n₀. Не можна просто сказати «очевидно» у переході.', worked: 'Доведемо 1+…+n=n(n+1)/2. База n=1: 1=1·2/2. Припустимо 1+…+k=k(k+1)/2. Тоді 1+…+k+(k+1)=k(k+1)/2+(k+1)=(k+1)(k+2)/2. Це формула для k+1, отже доведено.', exercise: 'За індукцією доведи 1+3+5+…+(2n−1)=n².', solution: 'База n=1: 1=1². Припустимо сума до k дорівнює k². Наступний непарний доданок 2(k+1)−1=2k+1. Тоді k²+2k+1=(k+1)². Перехід доведений.', quiz: 3 },
+      { title: 'Функції та відображення', simple: 'Функція кожному входу призначає рівно один вихід. Різні входи можуть мати однакове значення.', example: 'f(x)=x² на цілих: f(2)=4 і f(−2)=4. Функція не є ін’єктивною на ℤ.', check: 'Ін’єктивність: різні входи мають різні виходи. Сюр’єктивність: кожен елемент кодомену досягається.', keywords: ['функц', 'вхід', 'значенн', 'ін’єктив'], note: 'Відображення f:A→B задає кожному a∈A рівно одне f(a)∈B. Область визначення — A, кодомен — B, образ — фактично отримані значення. Ін’єктивна: f(a₁)=f(a₂) ⇒ a₁=a₂. Сюр’єктивна: кожен b∈B є образом. Бієктивна — ін’єктивна й сюр’єктивна, тоді існує обернена функція.', worked: 'Для f:ℤ→ℤ, f(x)=x+3: якщо f(a)=f(b), то a+3=b+3, отже a=b — ін’єктивна. Для будь-якого y∈ℤ беремо x=y−3, тоді f(x)=y — сюр’єктивна. Отже бієктивна.', exercise: 'Чи є g:ℤ→ℤ, g(x)=x² ін’єктивною? Наведи контрприклад або доведення.', solution: 'Ні: g(2)=4 і g(−2)=4, але 2≠−2. На ℤ також не сюр’єктивна, бо від’ємні числа не є квадратами.', quiz: 4 },
+      { title: 'Відношення: еквівалентність і порядок', simple: 'Відношення — це правило для пар. Для еквівалентності перевіряємо рефлексивність, симетричність і транзитивність.', example: 'На ℤ: a~b тоді й лише тоді, коли a−b парне. Це означає однакову парність.', check: 'Рефлексивне: aRa; симетричне: aRb⇒bRa; транзитивне: aRb і bRc⇒aRc.', keywords: ['рефлекс', 'симетр', 'транзитив', 'віднош'], note: 'Відношення R на A є підмножиною A×A. Еквівалентність має три властивості: рефлексивність, симетричність, транзитивність; вона розбиває множину на класи еквівалентності. Частковий порядок є рефлексивним, антисиметричним і транзитивним.', worked: 'Перевіримо «однакова парність» на цілих. a−a=0 парне — рефлексивність. Якщо a−b парне, то b−a=−(a−b) парне — симетричність. Якщо a−b і b−c парні, їх сума a−c парна — транзитивність. Отже, це еквівалентність.', exercise: 'На цілих визначено aRb ⇔ a≤b. Чи симетричне це відношення? Чи транзитивне?', solution: 'Не симетричне: 2≤3, але 3≤2 хибне. Транзитивне: якщо a≤b і b≤c, то a≤c.', quiz: 5 },
+      { title: 'Графи та лема про рукостискання', simple: 'Граф — вершини й ребра. У неорієнтованому графі кожне ребро додає 1 до степеня двох кінців.', example: 'Якщо степені вершин 1,2,2,3, сума 8, тому ребер 8/2=4.', check: 'Σdeg(v)=2|E|; сума степенів неорієнтованого графа завжди парна.', keywords: ['вершин', 'ребер', 'степін', '2|e|'], note: 'Граф G=(V,E) складається з множини вершин V та ребер E. Степінь deg(v) — кількість інцидентних ребер; петля рахується двічі. Лема про рукостискання: Σᵥdeg(v)=2|E|, бо кожне ребро має два кінці. Звідси кількість вершин непарного степеня завжди парна.', worked: 'У графі степені вершин 3,3,2,2,2. Сума 12, тому |E|=12/2=6. Дві вершини мають непарний степінь — це узгоджується з лемою.', exercise: 'Чи може існувати граф зі степенями 1,1,1,2? Поясни.', solution: 'Ні: сума степенів 5 непарна, а за лемою вона має дорівнювати 2|E| — парному числу.', quiz: 6 },
+      { title: 'Включення-виключення', simple: 'Складаючи розміри двох груп, спільні елементи рахуємо двічі, тому один раз віднімаємо.', example: '18 знають англійську, 12 німецьку, 5 обидві: хоча б одну знають 18+12−5=25.', check: 'Для трьох множин: сума одиночних, мінус попарні перетини, плюс потрійний перетин.', keywords: ['включ', 'виключ', 'перетин', 'двіч'], note: 'Для скінченних A,B: |A∪B|=|A|+|B|−|A∩B|. Для трьох множин додаємо |A|+|B|+|C|, віднімаємо три попарні перетини й додаємо |A∩B∩C|. Так коригується повторний підрахунок.', worked: 'У класі 20 учнів відвідують математику, 14 інформатику, 8 обидва гуртки. Хоча б один: 20+14−8=26. Якщо в класі 30 учнів, жодного: 30−26=4.', exercise: 'У групі 25 людей, 16 читають A, 13 — B, 7 читають обидва журнали. Скільки читають хоча б один?', solution: 'За формулою: 16+13−7=22 людини.', quiz: 7 },
+      { title: 'Остача mod і mod*', simple: 'Звичайний mod дає остачу від 0 до дільника мінус 1. У mod* нульову остачу замінюємо самим дільником.', example: '17 mod 5=2, отже 17 mod* 5=2. А 15 mod 5=0, тому 15 mod* 5=5.', check: 'Якщо a ділиться на b без остачі, a mod* b=b.', keywords: ['остач', 'mod', 'дільник', 'нуль'], note: 'Ділення з остачею: a=bq+r, де 0≤r<b. Звичайний залишок r=a mod b. У задачах цього тренажера mod* визначено як r, якщо r≠0, і b, якщо r=0. Завжди перевір, яке саме означення використовує завдання.', worked: 'Обчислимо 29 mod* 7. 29=7·4+1, тому остача 1 і відповідь 1. Для 28 mod* 7: звичайна остача 0, отже mod*=7.', exercise: 'Знайди 24 mod* 7 та 24 mod* 6.', solution: '24=7·3+3, тому 24 mod* 7=3. 24 ділиться на 6 націло, тому 24 mod* 6=6.', quiz: 8 },
+      { title: 'Нерівність Бернуллі', simple: 'Для x≥−1 і натурального n: (1+x)ⁿ≥1+nx. Її зручно доводити індукцією.', example: 'При x=0.1,n=3: (1.1)³=1.331, а 1+3·0.1=1.3; нерівність виконується.', check: 'У переході важливо врахувати доданок kx²≥0.', keywords: ['бернул', 'нерівн', 'індукц', 'x²'], note: 'Нерівність Бернуллі: (1+x)ⁿ≥1+nx для x≥−1 та цілого n≥0. База n=0 або n=1 очевидна. Для переходу множимо обидві частини на 1+x≥0 і використовуємо невід’ємність kx².', worked: 'Припустимо (1+x)^k≥1+kx. Тоді (1+x)^(k+1)≥(1+kx)(1+x)=1+(k+1)x+kx²≥1+(k+1)x, бо kx²≥0. Доведено для k+1.', exercise: 'Перевір нерівність Бернуллі для x=0.2, n=4: порівняй обидві частини.', solution: 'Ліва частина 1.2⁴=2.0736; права 1+4·0.2=1.8. Маємо 2.0736≥1.8.', quiz: 9 }
+    ];
+
+    const quizQuestions = [
+      { q: 'A={1,2,3}, B={2,4}. Чому дорівнює A∩B?', options: ['{1,2,3,4}', '{2}', '{1,3}'], answer: 1, why: 'Перетин містить тільки спільні елементи: тут це 2.' },
+      { q: 'Скільки підмножин має множина з 5 елементів?', options: ['10', '25', '32'], answer: 2, why: 'Кожен із 5 елементів включаємо або ні: 2⁵=32.' },
+      { q: 'Із 6 людей обирають голову та заступника. Скільки способів?', options: ['15', '30', '36'], answer: 1, why: 'Ролі різні, порядок важливий: 6·5=30.' },
+      { q: 'Що перевіряють першим в індукційному доведенні?', options: ['Базу', 'Висновок для всіх n', 'Контрприклад'], answer: 0, why: 'Спочатку перевіряють найменше значення n.' },
+      { q: 'Якщо f(2)=f(−2), що це показує для f(x)=x² на ℤ?', options: ['Функція не визначена', 'Не є ін’єктивною', 'Є бієктивною'], answer: 1, why: 'Різні входи мають однаковий образ, отже ін’єктивність порушено.' },
+      { q: 'Які властивості має еквівалентність?', options: ['Рефлексивність, симетричність, транзитивність', 'Лише симетричність', 'Антисиметричність і повнота'], answer: 0, why: 'Це три визначальні властивості відношення еквівалентності.' },
+      { q: 'Степені вершин графа 2,2,3,1. Скільки ребер?', options: ['4', '8', 'Неможливо'], answer: 0, why: 'Сума степенів 8; за лемою про рукостискання ребер 8/2=4.' },
+      { q: 'У двох множинах 15 і 11 елементів, у перетині 4. Скільки в об’єднанні?', options: ['30', '22', '26'], answer: 1, why: '15+11−4=22: перетин віднімаємо, бо його порахували двічі.' },
+      { q: 'Чому дорівнює 18 mod* 6?', options: ['0', '3', '6'], answer: 2, why: 'Остача звичайного ділення 0; за означенням mod* записуємо дільник 6.' },
+      { q: 'У переході Бернуллі чому kx²≥0?', options: ['Бо k натуральне, а x²≥0', 'Бо x завжди додатне', 'Це не потрібно'], answer: 0, why: 'Квадрат невід’ємний, а k≥0, тож добуток невід’ємний.' },
+      { q: 'Скільки способів обрати 2 людей із 5 без ролей?', options: ['10', '20', '25'], answer: 0, why: 'Порядок неважливий: C(5,2)=5·4/2=10.' },
+      { q: 'Для A={a,b,c} скільки елементів має P(A)?', options: ['3', '6', '8'], answer: 2, why: 'Множина з n елементів має 2ⁿ підмножин; тут 2³=8.' },
+      { q: 'Яка формула леми про рукостискання?', options: ['Σdeg(v)=|E|', 'Σdeg(v)=2|E|', '|V|=2|E|'], answer: 1, why: 'Кожне неорієнтоване ребро має два кінці й додає 2 до суми степенів.' },
+      { q: 'Якщо a≤b і b≤c, яку властивість це демонструє?', options: ['Симетричність', 'Транзитивність', 'Рефлексивність'], answer: 1, why: 'З a≤b та b≤c випливає a≤c — це транзитивність.' },
+      { q: 'Чому дорівнює 25 mod* 8?', options: ['1', '7', '8'], answer: 0, why: '25=8·3+1, остача 1 не нульова, тому відповідь 1.' }
+    ];
+
+    const planData = [
+      { day: "Понеділок", tasks: ["Вивчити означення Nivel 1 (1–12)", "Пройти картки Nivel 1", "Розрахувати свій варіант k"] },
+      { day: "Вівторок", tasks: ["Вивчити означення Nivel 1 (13–23)", "Опрацювати приклади Nivel 2 (1–5)", "Повторити mod*"] },
+      { day: "Середа", tasks: ["Приклади Nivel 2 (6–9)", "Доведення Nivel 3 (питання 1–3)", "Записати доведення індукцією"] },
+      { day: "Четвер", tasks: ["Доведення Nivel 3 (питання 4–7)", "Повторити біном Ньютона та Cₙᵏ", "Картки по Nivel 3"] },
+      { day: "П’ятниця", tasks: ["Nivel 4: нерівність Бернуллі та включення-виключення", "Nivel 4: нерівність Коші (AM–GM)", "Повторити всі теми"] },
+      { day: "Субота · день колоквіуму", tasks: ["Пройти 3 симуляції по 7 хвилин", "Перевірити фінальні формули", "Успішно здати колоквіум!"] }
+    ];
+
+    const allCards = D.concat(studyTopics.map((topic, index) => [index < 4 ? 1 : index < 7 ? 2 : 4, index + 1, topic.title, `<b>Конспект:</b> ${topic.note}<br><br><b>Розв’язаний приклад:</b> ${topic.worked}<br><br><b>Спробуй:</b> ${topic.exercise}<br><b>Відповідь:</b> ${topic.solution}`]));
+    let filteredCards = allCards.map((_, i) => i);
+    let curCard = 0;
+    let flip = false;
+    let pomoSec = 1500;
+    let pomoTimer = null;
+    let simSec = 420;
+    let simTimer = null;
+    let simTicketIndex = 0;
+
+    function tab(name) {
+      ['calc', 'plan', 'cards', 'examples', 'study', 'sim'].forEach(t => {
+        document.getElementById('sec-' + t).hidden = t !== name;
+        document.getElementById('tb-' + t).classList.toggle('active', t === name);
+      });
+      if (name === 'cards') showCard();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    let studyTimer = null;
+    let studySeconds = 300;
+    let activeQuizQuestions = [];
+    let currentExplainTopic = 0;
+    let lastExplainTopic = -1;
+
+    function renderQuizForm(items, heading) {
+      activeQuizQuestions = items;
+      const output = document.getElementById('study-output');
+      output.innerHTML = `<span class="tag">Тренувальний тест · ${items.length} запитань</span><h3>${heading}</h3><p>Обери відповіді. Після перевірки побачиш правильний варіант і коротке пояснення до кожного питання.</p><form id="study-quiz">${items.map((item, qi) => `<div class="quiz-question"><p>${qi + 1}. ${item.q}</p>${item.options.map((option, oi) => `<label class="quiz-option"><input type="radio" name="q${qi}" value="${oi}"><span>${option}</span></label>`).join('')}</div>`).join('')}</form><div class="study-actions"><button type="button" class="button primary" onclick="checkStudyQuiz()">Перевірити відповіді</button><button type="button" class="button" onclick="newRandomQuiz()">Інший випадковий тест</button></div><div id="quiz-result" aria-live="polite"></div>`;
+    }
+
+    function showStudyMode(mode) {
+      if (studyTimer) { clearInterval(studyTimer); studyTimer = null; }
+      document.querySelectorAll('.mode-button').forEach(button => button.classList.remove('active'));
+      document.getElementById('mode-' + mode).classList.add('active');
+      const output = document.getElementById('study-output');
+
+      if (mode === 'bed') {
+        const picks = [...studyTopics].sort(() => Math.random() - .5).slice(0, 3);
+        output.innerHTML = `<span class="tag">Спокійне повторення · 3 хвилини</span><h3>Три маленькі теми на сьогодні 🌙</h3><p>Прочитай означення, спробуй пригадати приклад, а потім розкрий розв’язання. Без поспіху й оцінок.</p>${picks.map((topic, i) => `<details class="quiz-question"><summary>${i + 1}. ${topic.title}</summary><p>${topic.simple}</p><div class="code">${topic.example}</div><p><b>Приклад з розв’язанням:</b> ${topic.worked}</p></details>`).join('')}<p class="helper">Заверши коротким пригадуванням — і відпочивай.</p>`;
+      } else if (mode === 'five') {
+        studySeconds = 300;
+        output.innerHTML = `<span class="tag">Фокус-режим · 5 хвилин</span><h3>Один повний цикл навчання</h3><p>1 хв — прочитай конспект; 2 хв — розбери приклад; 1 хв — розв’яжи задачу самостійно; 1 хв — звір відповідь.</p><div class="sim-time" id="study-countdown">05:00</div><div class="study-actions"><button class="button primary" onclick="toggleStudyTimer()" id="study-timer-btn">Почати 5 хвилин</button><button class="button" onclick="resetStudyTimer()">Скинути</button><button class="button" onclick="showSimpleTopic()">Інша тема</button></div><div id="five-topic"></div>`;
+        showSimpleTopic();
+      } else if (mode === 'tired') {
+        const topic = studyTopics[Math.floor(Math.random() * studyTopics.length)];
+        output.innerHTML = `<span class="tag">Легкий режим · одна думка</span><h3>${topic.title} ☁️</h3><p><b>Простими словами:</b> ${topic.simple}</p><div class="code">${topic.example}</div><details><summary>Показати готовий розбір</summary><p>${topic.worked}</p></details><div class="study-actions"><button class="button" onclick="showStudyMode('tired')">Інша коротка тема</button></div>`;
+      } else if (mode === 'quiz') {
+        newRandomQuiz();
+      } else {
+        currentExplainTopic = Math.floor(Math.random() * studyTopics.length);
+        lastExplainTopic = currentExplainTopic;
+        output.innerHTML = `<span class="tag">Активне пригадування</span><h3>Поясни тему своїми словами</h3><p>Отримай випадкову тему, поясни її без підказки: дай означення, наведи приклад і поясни, чому розв’язання правильне. Потім звір себе з конспектом.</p><div class="quiz-feedback"><b>Твоя тема:</b> <span id="explain-prompt"></span><br><span id="explain-task"></span></div><textarea class="answer-area" id="own-explanation" placeholder="Напиши пояснення своїми словами: означення → приклад → висновок…"></textarea><div class="study-actions"><button class="button primary" onclick="checkOwnExplanation()">Звірити мою відповідь</button><button class="button" onclick="showAnswerHint()">Показати повний конспект і розв’язання</button><button class="button" onclick="randomExplainTopic()">Інша випадкова тема</button></div><div id="explain-feedback" aria-live="polite"></div>`;
+        updateExplainPrompt();
+      }
+    }
+
+    function newRandomQuiz() {
+      const shuffled = [...quizQuestions].sort(() => Math.random() - .5);
+      renderQuizForm(shuffled.slice(0, 8), 'Випадковий тест з усіх тем');
+    }
+
+    function updateExplainPrompt() {
+      const topic = studyTopics[currentExplainTopic];
+      const prompt = document.getElementById('explain-prompt');
+      if (!prompt) return;
+      prompt.textContent = topic.title;
+      document.getElementById('explain-task').textContent = `Поясни суть. Розбери задачу: ${topic.exercise}`;
+    }
+
+    function randomExplainTopic() {
+      let next = Math.floor(Math.random() * studyTopics.length);
+      if (studyTopics.length > 1 && next === lastExplainTopic) next = (next + 1) % studyTopics.length;
+      currentExplainTopic = next;
+      lastExplainTopic = next;
+      document.getElementById('own-explanation').value = '';
+      document.getElementById('explain-feedback').innerHTML = '';
+      updateExplainPrompt();
+    }
+
+    function showSimpleTopic() {
+      const target = document.getElementById('five-topic');
+      if (!target) return;
+      const topic = studyTopics[Math.floor(Math.random() * studyTopics.length)];
+      target.innerHTML = `<div class="quiz-question"><span class="tag">Випадкова тема</span><h3>${topic.title}</h3><p><b>Коротко:</b> ${topic.simple}</p><p><b>Конспект:</b> ${topic.note}</p><div class="code">${topic.example}</div><details><summary>Показати покрокове розв’язання та відповідь</summary><p>${topic.worked}</p><p><b>Спробуй самостійно:</b> ${topic.exercise}</p><div class="solution"><b>Відповідь:</b> ${topic.solution}</div></details><p><b>Самоперевірка:</b> ${topic.check}</p></div>`;
+    }
+
+    function toggleStudyTimer() {
+      const button = document.getElementById('study-timer-btn');
+      if (studyTimer) {
+        clearInterval(studyTimer); studyTimer = null;
+        if (button) button.textContent = 'Продовжити';
+        return;
+      }
+      if (studySeconds <= 0) resetStudyTimer();
+      if (button) button.textContent = 'Пауза';
+      studyTimer = setInterval(() => {
+        studySeconds = Math.max(0, studySeconds - 1);
+        const display = document.getElementById('study-countdown');
+        if (display) display.textContent = formatTime(studySeconds);
+        if (!studySeconds) {
+          clearInterval(studyTimer); studyTimer = null;
+          if (button) button.textContent = 'Час вийшов · почати знову';
+        }
+      }, 1000);
+    }
+
+    function resetStudyTimer() {
+      clearInterval(studyTimer); studyTimer = null; studySeconds = 300;
+      const display = document.getElementById('study-countdown');
+      const button = document.getElementById('study-timer-btn');
+      if (display) display.textContent = '05:00';
+      if (button) button.textContent = 'Почати 5 хвилин';
+    }
+
+    function checkStudyQuiz() {
+      let score = 0, unanswered = 0;
+      activeQuizQuestions.forEach((item, qi) => {
+        const selected = document.querySelector(`input[name="q${qi}"]:checked`);
+        if (!selected) { unanswered++; return; }
+        if (Number(selected.value) === item.answer) score++;
+      });
+      const result = document.getElementById('quiz-result');
+      if (unanswered) {
+        result.innerHTML = `<div class="quiz-feedback incorrect">Ще залишилося відповісти на ${unanswered} запитань. Заповни всі відповіді й перевір ще раз.</div>`;
+        return;
+      }
+      const notes = activeQuizQuestions.map((item, qi) => {
+        const selected = Number(document.querySelector(`input[name="q${qi}"]:checked`).value);
+        const status = selected === item.answer ? '✓ Правильно.' : `Правильна відповідь: ${item.options[item.answer]}.`;
+        return `<li>${status} ${item.why}</li>`;
+      }).join('');
+      result.innerHTML = `<div class="quiz-feedback ${score < activeQuizQuestions.length / 2 ? 'incorrect' : ''}"><b>Результат: ${score} з ${activeQuizQuestions.length}.</b> ${score === activeQuizQuestions.length ? 'Чудово! Усі відповіді правильні.' : score >= activeQuizQuestions.length / 2 ? 'Гарна робота. Переглянь пояснення до помилок.' : 'Це тренування — повтори теми й спробуй ще раз.'}<ol>${notes}</ol></div>`;
+    }
+
+    function checkOwnExplanation() {
+      const topic = studyTopics[currentExplainTopic];
+      const text = document.getElementById('own-explanation').value.trim().toLocaleLowerCase('uk');
+      const matches = topic.keywords.filter(word => text.includes(word));
+      const feedback = document.getElementById('explain-feedback');
+      if (text.length < 30) {
+        feedback.innerHTML = '<div class="quiz-feedback incorrect">Спробуй написати щонайменше кілька речень: означення, кроки розв’язання й приклад.</div>';
+        return;
+      }
+      feedback.innerHTML = `<div class="quiz-feedback ${matches.length < 2 ? 'incorrect' : ''}"><b>${matches.length >= 2 ? 'Є важливі ключові ідеї!' : 'Додай точніші поняття й формулу.'}</b> Знайдені підказки: ${matches.length ? matches.join(', ') : 'поки не знайдені'}. Автоматична перевірка шукає лише слова — зміст своєї відповіді оціни за чеклістом.<br><br><b>Перевір у відповіді:</b> ${topic.check}<br><b>Не забудь:</b> навести приклад і пояснити кожен крок.</div>`;
+    }
+
+    function showAnswerHint() {
+      const topic = studyTopics[currentExplainTopic];
+      document.getElementById('explain-feedback').innerHTML = `<div class="quiz-feedback"><b>Конспект:</b> ${topic.note}<br><br><b>Простими словами:</b> ${topic.simple}<br><br><b>Розібраний приклад:</b> ${topic.worked}<br><br><b>Твоя задача:</b> ${topic.exercise}<br><b>Готове розв’язання:</b> ${topic.solution}</div>`;
+    }
+
+    function renderTopicNotes() {
+      document.getElementById('topic-notes').innerHTML = studyTopics.map((topic, i) => `<article class="panel topic-note ${i % 2 ? 'mint' : ''}"><span class="tag">Конспект · тема ${i + 1}</span><h3>${topic.title}</h3><p><b>Коротко:</b> ${topic.simple}</p><details><summary>Відкрити повний конспект</summary><p>${topic.note}</p></details><details><summary>Побачити приклад із розв’язанням</summary><div class="solution">${topic.worked}</div></details><details><summary>Спробувати задачу самостійно</summary><p>${topic.exercise}</p><details><summary>Показати готову відповідь</summary><div class="solution">${topic.solution}</div></details></details><p class="helper"><b>Контрольне запитання:</b> ${topic.check}</p></article>`).join('');
+    }
+
+    function getVariantQuiz(k) {
+      const questionNumbers = [modStar(k, 23), modStar(k + 12, 23), modStar(k, 9), modStar(k + 5, 9), modStar(k, 7), modStar(k, 4)];
+      const used = new Set();
+      return questionNumbers.map((number, i) => {
+        let index = (number - 1 + i) % quizQuestions.length;
+        while (used.has(index)) index = (index + 1) % quizQuestions.length;
+        used.add(index);
+        const item = quizQuestions[index];
+        return { ...item, q: `Тренувальне питання №${number} · ${item.q}` };
+      });
+    }
+
+    function startVariantQuiz(k) {
+      const selected = getVariantQuiz(k);
+      tab('study');
+      document.querySelectorAll('.mode-button').forEach(button => button.classList.remove('active'));
+      document.getElementById('mode-quiz').classList.add('active');
+      renderQuizForm(selected, `Тест-тренування для варіанта ${k}`);
+      window.scrollTo({ top: document.getElementById('study-output').getBoundingClientRect().top + window.scrollY - 100, behavior: 'smooth' });
+    }
+
+    function modStar(a, b) {
+      const remainder = a % b;
+      return remainder === 0 ? b : remainder;
+    }
+
+    const siteExampleProofs = {
+      mod: 'Знаходимо залишок. Якщо ділення націло — замість нуля записуємо дільник: 15 mod* 3 = 3, 15 mod* 4 = 3, 3 mod* 7 = 3. У першому прикладі звичайний залишок — 0, тому відповідь дорівнює 3.',
+      induction: 'Твердження: 1 + 2 + 2² + … + 2ⁿ = 2ⁿ⁺¹ − 1. База n=1: 1 + 2 = 3 = 2² − 1. Припущення n=k: сума до 2ᵏ дорівнює 2ᵏ⁺¹ − 1. Перехід: (2ᵏ⁺¹ − 1) + 2ᵏ⁺¹ = 2ᵏ⁺² − 1. Отже, перехід до k+1 доведено ∎',
+      combinatorics: 'Для команди з 2 людей із 5 порядок неважливий: вибираємо сполуку C₅² = 5!/(2!·3!) = 10. Для золотої та срібної медалі порядок важливий: це розміщення A₅² = 5·4 = 20.',
+      graphs: 'Степінь вершини — кількість ребер, що до неї прилягають. Якщо порахувати степені всіх вершин, кожне ребро буде враховане двічі: Σ deg(v) = 2|E|. Степені: 1, 2, 2, 1 → сума 6, отже ребер: 6/2 = 3 (лема про рукостискання).',
+      inclusion: 'У групі 12 людей вивчають англійську, 9 — німецьку, а 4 — обидві мови. Спільних людей не можна рахувати двічі: 12 + 9 − 4 = 17 людей. Для двох скінченних множин: |A∪B| = |A| + |B| − |A∩B|.',
+      relations: 'На цілих числах відношення «мають однакову парність» групує числа на парні та непарні (2 ~ 8, бо обидва парні; 3 ~ 7, бо обидва непарні). Еквівалентність має три властивості: рефлексивність, симетричність і транзитивність.'
+    };
+
+    function getTicketQuestionMaterial(nivel, qNum, quizItem) {
+      const exactCard = D.find(item => item[0] === nivel && item[1] === qNum);
+      const levelCards = D.filter(item => item[0] === nivel);
+      const fallbackCard = levelCards.length ? levelCards[(qNum - 1) % levelCards.length] : D[(qNum - 1) % D.length];
+      const card = exactCard || fallbackCard;
+
+      let topicIndex = 0;
+      let extraProof = '';
+      if (nivel === 1) {
+        if (qNum <= 4) { topicIndex = 1; }
+        else if (qNum <= 12) { topicIndex = 0; }
+        else if (qNum <= 18) { topicIndex = 2; extraProof = siteExampleProofs.combinatorics; }
+        else if (qNum <= 20) { topicIndex = 4; }
+        else if (qNum <= 22) { topicIndex = 5; extraProof = siteExampleProofs.relations; }
+        else { topicIndex = 8; extraProof = siteExampleProofs.mod; }
+      } else if (nivel === 2) {
+        const map2 = [0, 1, 2, 2, 4, 5, 6, 0, 8];
+        topicIndex = map2[(qNum - 1) % map2.length];
+        if (topicIndex === 2) extraProof = siteExampleProofs.combinatorics;
+        if (topicIndex === 5) extraProof = siteExampleProofs.relations;
+        if (topicIndex === 6) extraProof = siteExampleProofs.graphs;
+        if (topicIndex === 8) extraProof = siteExampleProofs.mod;
+      } else if (nivel === 3) {
+        const map3 = [2, 3, 3, 3, 2, 5, 6];
+        topicIndex = map3[(qNum - 1) % map3.length];
+        if (topicIndex === 3) extraProof = siteExampleProofs.induction;
+        else if (topicIndex === 2) extraProof = D.find(item => item[0] === 3 && item[1] === 1)[3];
+        else if (topicIndex === 5) extraProof = siteExampleProofs.relations;
+        else if (topicIndex === 6) extraProof = siteExampleProofs.graphs;
+      } else {
+        const map4 = [9, 2, 7, 3];
+        topicIndex = map4[(qNum - 1) % map4.length];
+        if (exactCard) extraProof = exactCard[3];
+      }
+
+      const topic = studyTopics[topicIndex];
+      return { nivel, qNum, exactCard, card, topic, extraProof, quizItem };
+    }
+
+    function buildTicketSolutionsHTML(k) {
+      const q1 = modStar(k, 23), q2 = modStar(k + 12, 23);
+      const q3 = modStar(k, 9), q4 = modStar(k + 5, 9);
+      const q5 = modStar(k, 7), q6 = modStar(k, 4);
+      const quizItems = getVariantQuiz(k);
+      const slots = [
+        { nivel: 1, qNum: q1, formula: `${k} mod* 23 = ${q1}` },
+        { nivel: 1, qNum: q2, formula: `(${k}+12) mod* 23 = ${q2}` },
+        { nivel: 2, qNum: q3, formula: `${k} mod* 9 = ${q3}` },
+        { nivel: 2, qNum: q4, formula: `(${k}+5) mod* 9 = ${q4}` },
+        { nivel: 3, qNum: q5, formula: `${k} mod* 7 = ${q5}` },
+        { nivel: 4, qNum: q6, formula: `${k} mod* 4 = ${q6}` }
+      ];
+
+      const cardsHTML = slots.map((slot, idx) => {
+        const mat = getTicketQuestionMaterial(slot.nivel, slot.qNum, quizItems[idx]);
+        const styleClass = slot.nivel === 3 ? 'mint' : slot.nivel === 4 ? 'butter' : '';
+        if (mat.exactCard) {
+          const boxLabel = slot.nivel === 1 ? 'Означення / формулювання:' : slot.nivel === 2 ? 'Розв’язок:' : 'Повне доведення:';
+          return `<article class="panel ticket-solution-card ${styleClass}">
+            <div class="ticket-solution-meta">
+              <span class="tag">Білет №${k} · Nivel ${slot.nivel} · Питання №${slot.qNum}</span>
+              <span class="mini-label">${slot.formula}</span>
+            </div>
+            <h4>${mat.exactCard[2]}</h4>
+            <div class="proof-box">
+              <b>${boxLabel}</b><br>
+              ${mat.exactCard[3]}
+            </div>
+          </article>`;
+        }
+        const cardHeading = mat.exactCard
+          ? `${mat.exactCard[2]} · ${mat.topic.title}`
+          : `${mat.topic.title} (опорна картка рівня: ${mat.card[2]})`;
+        return `<article class="panel ticket-solution-card ${styleClass}">
+          <div class="ticket-solution-meta">
+            <span class="tag">Білет №${k} · Nivel ${slot.nivel} · Питання №${slot.qNum}</span>
+            <span class="mini-label">${slot.formula}</span>
+          </div>
+          <h4>${cardHeading}</h4>
+          <p><b>Означення / база (Nivel ${mat.card[0]} · №${mat.card[1]} — ${mat.card[2]}):</b> ${mat.card[3]}</p>
+          <p><b>Конспект теми:</b> ${mat.topic.note}</p>
+          <div class="code">${mat.topic.example}</div>
+          <div class="proof-box">
+            <b>Розв’язок та доведення:</b><br>
+            ${mat.topic.worked}
+            ${mat.extraProof ? `<br><br><b>Доведення / опорний приклад із сайту:</b> ${mat.extraProof}` : ''}
+          </div>
+          <div class="proof-box">
+            <b>Типова задача:</b> ${mat.topic.exercise}<br>
+            <b>Готовий розв’язок:</b> ${mat.topic.solution}
+          </div>
+        </article>`;
+      }).join('');
+
+      return `<div class="panel ticket-solutions-header">
+        <div>
+          <span class="eyebrow">Повний розбір варіанта</span>
+          <h3>Білет №${k} — питання, Nivel 1–4, розв’язки та доведення</h3>
+        </div>
+        <div class="ticket-badges">
+          <span class="ticket-badge">Білет №${k}</span>
+          <span class="ticket-badge">Nivel 1: №${q1}, №${q2}</span>
+          <span class="ticket-badge">Nivel 2: №${q3}, №${q4}</span>
+          <span class="ticket-badge">Nivel 3: №${q5}</span>
+          <span class="ticket-badge">Nivel 4: №${q6}</span>
+        </div>
+      </div>
+      <div class="ticket-solutions-grid">${cardsHTML}</div>`;
+    }
+
+    function calcK() {
+      const field = document.getElementById('k-val');
+      const k = Number(field.value);
+      const result = document.getElementById('k-res');
+      const solutionsBlock = document.getElementById('ticket-solutions-block');
+      if (!Number.isInteger(k) || k < 1 || k > 100) {
+        result.innerHTML = '<p class="helper" style="color:var(--berry);margin-top:12px">Введи ціле число від 1 до 100.</p>';
+        if (solutionsBlock) solutionsBlock.innerHTML = '';
+        field.focus();
+        return;
+      }
+      const q1 = modStar(k, 23), q2 = modStar(k + 12, 23);
+      const q3 = modStar(k, 9), q4 = modStar(k + 5, 9);
+      const q5 = modStar(k, 7), q6 = modStar(k, 4);
+      result.innerHTML = `<div class="result-wrap"><table><thead><tr><th>Білет</th><th>Рівень</th><th>Формула</th><th>Питання</th></tr></thead><tbody>
+        <tr><td><b>№${k}</b></td><td>Nivel 1</td><td>k mod* 23 / (k+12) mod* 23</td><td><b>№${q1}</b>, <b>№${q2}</b></td></tr>
+        <tr><td><b>№${k}</b></td><td>Nivel 2</td><td>k mod* 9 / (k+5) mod* 9</td><td><b>№${q3}</b>, <b>№${q4}</b></td></tr>
+        <tr><td><b>№${k}</b></td><td>Nivel 3</td><td>k mod* 7</td><td><b>№${q5}</b></td></tr>
+        <tr><td><b>№${k}</b></td><td>Nivel 4</td><td>k mod* 4</td><td><b>№${q6}</b></td></tr>
+      </tbody></table></div>`;
+      if (solutionsBlock) {
+        solutionsBlock.innerHTML = buildTicketSolutionsHTML(k);
+      }
+    }
+
+    function renderPlan() {
+      let html = '', total = 0, done = 0;
+      planData.forEach((day, dayIndex) => {
+        html += `<div class="plan-day"><div class="day-name">${day.day}</div>`;
+        day.tasks.forEach((task, taskIndex) => {
+          total++;
+          const id = `plan-${dayIndex}-${taskIndex}`;
+          let checked = false;
+          try { checked = localStorage.getItem(id) === 'true'; } catch (e) {}
+          if (checked) done++;
+          html += `<label class="plan-item"><input type="checkbox" id="${id}" ${checked ? 'checked' : ''} onchange="toggleTask('${id}')"><span>${task}</span></label>`;
+        });
+        html += '</div>';
+      });
+      document.getElementById('plan-items-container').innerHTML = html;
+      const percent = Math.round(done / total * 100);
+      document.getElementById('plan-prog').style.width = percent + '%';
+      document.getElementById('plan-percent').textContent = percent + '%';
+    }
+
+    function toggleTask(id) {
+      const box = document.getElementById(id);
+      try { localStorage.setItem(id, box.checked); } catch (e) {}
+      renderPlan();
+    }
+
+    function filterCards() {
+      const query = document.getElementById('card-search').value.trim().toLocaleLowerCase('uk');
+      filteredCards = allCards.map((card, index) => ({ card, index })).filter(({ card }) =>
+        `${card[0]} ${card[1]} ${card[2]} ${card[3]}`.toLocaleLowerCase('uk').includes(query)
+      ).map(item => item.index);
+      curCard = 0;
+      flip = false;
+      showCard();
+    }
+
+    function showCard() {
+      const content = document.getElementById('fc-content');
+      const counter = document.getElementById('card-counter');
+      if (!filteredCards.length) {
+        content.innerHTML = '<p class="empty-state">Нічого не знайдено. Спробуй інший запит.</p>';
+        counter.textContent = '0 карток';
+        return;
+      }
+      curCard = (curCard + filteredCards.length) % filteredCards.length;
+      const card = allCards[filteredCards[curCard]];
+      content.innerHTML = flip
+        ? `<span class="tag">Відповідь · Nivel ${card[0]}</span><div class="a">${card[3]}</div>`
+        : `<span class="tag">Nivel ${card[0]} · №${card[1]}</span><div class="q">${card[2]}</div>`;
+      counter.textContent = `${curCard + 1} / ${filteredCards.length} карток`;
+    }
+
+    function flipCard() { if (filteredCards.length) { flip = !flip; showCard(); } }
+    function nextCard() { if (filteredCards.length) { curCard = (curCard + 1) % filteredCards.length; flip = false; showCard(); } }
+    function prevCard() { if (filteredCards.length) { curCard = (curCard - 1 + filteredCards.length) % filteredCards.length; flip = false; showCard(); } }
+
+    function formatTime(seconds) {
+      return `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
+    }
+
+    function togglePomo() {
+      const button = document.getElementById('pomo-btn');
+      if (pomoTimer) {
+        clearInterval(pomoTimer);
+        pomoTimer = null;
+        button.textContent = 'Продовжити';
+        return;
+      }
+      button.textContent = 'Пауза';
+      pomoTimer = setInterval(() => {
+        pomoSec = Math.max(0, pomoSec - 1);
+        document.getElementById('pomo-display').textContent = formatTime(pomoSec);
+        if (pomoSec === 0) {
+          clearInterval(pomoTimer);
+          pomoTimer = null;
+          button.textContent = 'Старт';
+          alert('Час зробити перерву!');
+        }
+      }, 1000);
+    }
+
+    function resetPomo() {
+      clearInterval(pomoTimer);
+      pomoTimer = null;
+      pomoSec = 1500;
+      document.getElementById('pomo-display').textContent = '25:00';
+      document.getElementById('pomo-btn').textContent = 'Старт';
+    }
+
+    function startSim() {
+      if (simTimer) {
+        clearInterval(simTimer);
+        simTimer = null;
+        document.getElementById('sim-btn').textContent = 'Продовжити симуляцію';
+        return;
+      }
+      if (simSec === 0) {
+        simSec = 420;
+        document.getElementById('sim-timer').textContent = '07:00';
+        document.getElementById('sim-ticket').innerHTML = '';
+      }
+      if (simSec === 420 && !document.querySelector('#sim-ticket .ticket-card')) {
+        simTicketIndex = Math.floor(Math.random() * studyTopics.length);
+        const simK = Math.floor(Math.random() * 100) + 1;
+        const topic = studyTopics[simTicketIndex];
+        document.getElementById('sim-ticket').innerHTML = `<div class="panel ticket-card"><span class="tag">Тренувальний білет №${simK} · ${topic.title}</span><h3>${topic.exercise}</h3><p class="helper">Спершу розв’яжи самостійно або поясни усно. Коли будеш готова — відкрий розбір та доведення до всього білета №${simK}.</p><details><summary>Показати готове розв’язання та доведення білета №${simK}</summary><p><b>Конспект:</b> ${topic.note}</p><p><b>Приклад:</b> ${topic.worked}</p><div class="solution"><b>Розв’язання задачі:</b> ${topic.solution}</div><div style="margin-top:16px">${buildTicketSolutionsHTML(simK)}</div></details></div>`;
+      }
+      document.getElementById('sim-btn').textContent = 'Пауза';
+      simTimer = setInterval(() => {
+        simSec = Math.max(0, simSec - 1);
+        document.getElementById('sim-timer').textContent = formatTime(simSec);
+        if (simSec === 0) {
+          clearInterval(simTimer);
+          simTimer = null;
+          document.getElementById('sim-btn').textContent = 'Почати знову';
+          document.getElementById('sim-ticket').insertAdjacentHTML('beforeend', '<p class="helper" style="text-align:center;margin-top:12px">Час! Порівняй свою відповідь із готовим розв’язанням.</p>');
+        }
+      }, 1000);
+    }
+
+    renderPlan();
+    renderTopicNotes();
+    calcK();
+    showCard();
+    showStudyMode('bed');
+  </script>
+</body>
+</html>
