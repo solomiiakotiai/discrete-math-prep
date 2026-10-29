@@ -257,7 +257,90 @@
     .concept-select { width: 100%; margin: 16px 0 0; padding: 12px 14px; border: 1px solid #3d2f3b; border-radius: 12px; background: #141016; color: var(--ink); font: inherit; }
     footer { padding: 30px 10px 0; color: var(--muted); text-align: center; font-size: .78rem; }
 
+    .app-shell[hidden], .landing-screen[hidden] { display: none; }
+    .landing-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 28px 20px;
+      background: radial-gradient(circle at 50% 15%, rgba(240, 98, 146, .12), transparent 55%), var(--paper);
+    }
+    .landing-card {
+      width: min(760px, 100%);
+      padding: clamp(30px, 6vw, 56px);
+      text-align: center;
+      border: 1px solid #452635;
+      border-radius: 28px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+    .landing-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 11px;
+      margin-bottom: 18px;
+      color: var(--ink);
+      font-size: .95rem;
+      font-weight: 800;
+      letter-spacing: -.03em;
+    }
+    .landing-card h1 {
+      margin: 12px 0 12px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(1.9rem, 4.5vw, 3rem);
+      font-weight: 500;
+      line-height: 1.12;
+      letter-spacing: -.04em;
+      color: var(--ink);
+    }
+    .landing-card p {
+      max-width: 480px;
+      margin: 0 auto 28px;
+      color: var(--muted);
+      font-size: .94rem;
+    }
+    .landing-buttons {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+    .landing-subject-btn {
+      min-height: 96px;
+      padding: 20px 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 1px solid #452635;
+      border-radius: 18px;
+      background: var(--pink-light);
+      color: var(--ink);
+      font-size: 1rem;
+      font-weight: 800;
+      text-align: center;
+      transition: transform .2s, background .2s, border-color .2s, box-shadow .2s;
+    }
+    .landing-subject-btn:hover {
+      transform: translateY(-3px);
+      background: var(--pink);
+      border-color: var(--berry);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, .38);
+    }
+    .landing-subject-btn.primary-subject {
+      background: var(--berry-btn);
+      border-color: var(--berry);
+      color: #fff;
+    }
+    .landing-subject-btn.primary-subject:hover {
+      background: #b02e5a;
+      border-color: var(--berry-dark);
+    }
+
     @media (max-width: 880px) {
+      .landing-buttons { grid-template-columns: 1fr; }
+      .landing-subject-btn { min-height: 68px; }
       .app-shell { grid-template-columns: 1fr; }
       .sidebar {
         position: sticky;
@@ -302,7 +385,30 @@
   </style>
 </head>
 <body>
-  <div class="app-shell">
+  <section id="landing-screen" class="landing-screen" aria-label="Вибір предмета">
+    <div class="landing-card">
+      <div class="landing-brand">
+        <span class="brand-mark">∑</span>
+        <span>Математика без паніки<small>Твій простір підготовки</small></span>
+      </div>
+      <div><span class="eyebrow">Підготовка до колоквіумів</span></div>
+      <h1>До якого колоквіуму готуємось сьогодні?</h1>
+      <p>Обери дисципліну, щоб перейти до матеріалів, питань та розв’язків.</p>
+      <div class="landing-buttons">
+        <button type="button" class="landing-subject-btn primary-subject" onclick="openDiscreteMath()">
+          <span>Дискретна математика</span>
+        </button>
+        <button type="button" class="landing-subject-btn">
+          <span>Математичний аналіз</span>
+        </button>
+        <button type="button" class="landing-subject-btn">
+          <span>Алгебра та геометрія</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <div class="app-shell" id="discrete-app" hidden>
     <aside class="sidebar" aria-label="Бічна панель навігації">
       <div class="sidebar-top">
         <div class="sidebar-header-row">
@@ -552,6 +658,12 @@
     let simSec = 420;
     let simTimer = null;
     let simTicketIndex = 0;
+
+    function openDiscreteMath() {
+      document.getElementById('landing-screen').hidden = true;
+      document.getElementById('discrete-app').hidden = false;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
 
     function tab(name) {
       ['calc', 'questions', 'plan', 'cards', 'examples', 'study', 'sim'].forEach(t => {
