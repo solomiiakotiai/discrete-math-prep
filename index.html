@@ -450,7 +450,7 @@
           <h3>Розрахуй варіант k</h3>
           <p class="helper">Номер варіанта — ціле число від 1 до 100.</p>
           <div class="input-row">
-            <input type="number" id="k-val" min="1" max="100" value="1" aria-label="Номер варіанта k">
+            <input type="number" id="k-val" min="1" max="100" value="1" aria-label="Номер варіанта k" onkeydown="if(event.key==='Enter'){event.preventDefault();calcK();}">
             <button class="button primary" onclick="calcK()">Показати білет <span aria-hidden="true">→</span></button>
           </div>
           <div id="k-res" aria-live="polite"></div>
