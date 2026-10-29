@@ -412,7 +412,7 @@
     <aside class="sidebar" aria-label="Бічна панель навігації">
       <div class="sidebar-top">
         <div class="sidebar-header-row">
-          <a class="brand" href="#top" onclick="tab('calc')" aria-label="На головну — Мій білет">
+          <a class="brand" href="#top" onclick="event.preventDefault();openLanding()" aria-label="Повернутись на титульну сторінку">
             <span class="brand-mark">∑</span>
             <span>Математика без паніки<small>Твій простір підготовки</small></span>
           </a>
@@ -420,6 +420,7 @@
         <div class="top-meta"><span class="live-dot"></span><span>Колоквіум · Nivel 1–4</span></div>
         <div class="sidebar-label">Головна сторінка</div>
         <nav class="tabs" aria-label="Розділи">
+          <button type="button" onclick="openLanding()"><span>← Вибір предмета</span><small>Титульна</small></button>
           <button id="tb-calc" class="active" onclick="tab('calc')"><span>Мій білет і розв’язки</span><small>Головна</small></button>
           <div class="sidebar-label" style="margin-top:8px;padding-left:4px">Інші режими</div>
           <button id="tb-questions" onclick="tab('questions')"><span>Список питань</span><small>Nivel 1–4</small></button>
@@ -662,6 +663,12 @@
     function openDiscreteMath() {
       document.getElementById('landing-screen').hidden = true;
       document.getElementById('discrete-app').hidden = false;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function openLanding() {
+      document.getElementById('discrete-app').hidden = true;
+      document.getElementById('landing-screen').hidden = false;
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
