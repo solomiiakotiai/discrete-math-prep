@@ -178,8 +178,8 @@
     .plan-item input { flex: 0 0 auto; width: 17px; height: 17px; margin: 2px 0 0; accent-color: var(--berry); }
 
     .cards-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 14px; }
-    #card-search { width: min(370px, 68%); }
-    #card-counter { color: var(--muted); font-size: .82rem; font-weight: 750; }
+    #card-search, #ma-question-search { width: min(420px, 72%); }
+    #card-counter, #ma-question-counter { color: var(--muted); font-size: .82rem; font-weight: 750; }
     .flashcard { min-height: 315px; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding: clamp(25px, 6vw, 58px); border: 1px solid #482838; border-radius: 27px; background: var(--pink-light); box-shadow: none; cursor: pointer; transition: background .2s; }
     .flashcard:hover { background: #2f1b27; }
     .flashcard .q { max-width: 690px; margin-top: 19px; font-family: Georgia, serif; font-size: clamp(1.8rem, 5vw, 3.5rem); line-height: 1.1; letter-spacing: -.04em; }
@@ -377,7 +377,7 @@
       .calc-panel, .formula-panel, .tasks-panel, .example-card { padding: 21px; }
       .progress-panel { padding: 20px; }
       .cards-toolbar { align-items: flex-start; flex-direction: column; }
-      #card-search { width: 100%; }
+      #card-search, #ma-question-search { width: 100%; }
       .card-hint { display: none; }
       .card-controls .button { padding: 0 13px; }
       .flashcard { min-height: 280px; }
@@ -398,7 +398,7 @@
         <button type="button" class="landing-subject-btn primary-subject" onclick="openDiscreteMath()">
           <span>Дискретна математика</span>
         </button>
-        <button type="button" class="landing-subject-btn">
+        <button type="button" class="landing-subject-btn" onclick="openCalculus()">
           <span>Математичний аналіз</span>
         </button>
         <button type="button" class="landing-subject-btn">
@@ -563,6 +563,56 @@
   </main>
   </div>
 
+  <div class="app-shell" id="calculus-app" hidden>
+    <aside class="sidebar" aria-label="Бічна панель навігації — Математичний аналіз">
+      <div class="sidebar-top">
+        <div class="sidebar-header-row">
+          <a class="brand" href="#top" onclick="event.preventDefault();openLanding()" aria-label="Повернутись на титульну сторінку">
+            <span class="brand-mark">∑</span>
+            <span>Математика без паніки<small>Твій простір підготовки</small></span>
+          </a>
+        </div>
+        <div class="top-meta"><span class="live-dot"></span><span>Математичний аналіз · Колоквіум</span></div>
+        <div class="sidebar-label">Навігація</div>
+        <nav class="tabs" aria-label="Розділи математичного аналізу">
+          <button type="button" onclick="openLanding()"><span>← Вибір предмета</span><small>Титульна</small></button>
+          <button id="tb-ma-questions" class="active" onclick="maTab('questions')"><span>Список питань</span><small>44 питання</small></button>
+        </nav>
+      </div>
+      <div class="sidebar-card">
+        <span class="eyebrow">Навчайся у своєму темпі</span>
+        <h2>Складне стає <em>простішим.</em></h2>
+        <p>Питання для підготовки до колоквіуму з математичного аналізу зі зручним пошуком.</p>
+      </div>
+    </aside>
+
+    <main id="ma-top">
+      <section id="sec-ma-questions">
+        <div class="section-heading">
+          <div><span class="eyebrow">Математичний аналіз · Питання до колоквіуму</span><h2>Список питань</h2></div>
+          <p>Шукай потрібне означення чи теорему за ключовими словами або номером питання.</p>
+        </div>
+        <div class="cards-toolbar">
+          <input type="search" id="ma-question-search" placeholder="Пошук за ключовими словами (наприклад: границя, похідна, Коші)…" oninput="filterCalculusQuestions()" aria-label="Пошук питань за ключовими словами">
+          <span id="ma-question-counter"></span>
+        </div>
+        <div class="questions-level-block">
+          <div class="panel ticket-solutions-header">
+            <div>
+              <span class="eyebrow">Математичний аналіз</span>
+              <h3>Означення:</h3>
+            </div>
+            <div class="ticket-badges">
+              <span class="ticket-badge" id="ma-question-badge">Питань: 44</span>
+            </div>
+          </div>
+          <div id="ma-questions-list-container" class="questions-grid" aria-live="polite"></div>
+        </div>
+      </section>
+      <footer>Зроблено для спокійної та впевненої підготовки <span aria-hidden="true">✳</span></footer>
+    </main>
+  </div>
+
   <script>
     const D = [
       [1, 1, "Підмножина", "Множина A називається <b>підмножиною</b> множини B (позначається A ⊆ B), якщо кожен елемент множини A є водночас елементом множини B.<br><b>Формальний опис:</b> A ⊆ B ⇔ ∀x (x ∈ A ⇒ x ∈ B)."],
@@ -662,13 +712,30 @@
 
     function openDiscreteMath() {
       document.getElementById('landing-screen').hidden = true;
+      document.getElementById('calculus-app').hidden = true;
       document.getElementById('discrete-app').hidden = false;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function openCalculus() {
+      document.getElementById('landing-screen').hidden = true;
+      document.getElementById('discrete-app').hidden = true;
+      document.getElementById('calculus-app').hidden = false;
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function openLanding() {
       document.getElementById('discrete-app').hidden = true;
+      document.getElementById('calculus-app').hidden = true;
       document.getElementById('landing-screen').hidden = false;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function maTab(name) {
+      ['questions'].forEach(t => {
+        document.getElementById('sec-ma-' + t).hidden = t !== name;
+        document.getElementById('tb-ma-' + t).classList.toggle('active', t === name);
+      });
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -1159,9 +1226,87 @@
       }).join('');
     }
 
+    const calculusQuestions = [
+      [1, "Скалярний добуток векторів(означення) через координати і через косинус"],
+      [2, "Означення що таке функція, що таке образ прообраз"],
+      [3, "Область визначення і множина значень функції (озн.)"],
+      [4, "Сюр'єкція, ін'єкція, бієкція"],
+      [5, "Образ і прообраз множини"],
+      [6, "Композиція функції"],
+      [7, "Обмежена зверху, обмежена знизу, обмежена множина"],
+      [8, "Максимальний, мінімальний елемент множини"],
+      [9, "Супремум, інфінум"],
+      [10, "Зліченні множини"],
+      [11, "Незліченні множини"],
+      [12, "Теорема Кантера з доведенням"],
+      [13, "Послідовність"],
+      [14, "Обмежена послідовність"],
+      [15, "Монотонна послідовність"],
+      [16, "Границя послідовності"],
+      [17, "Як знаходити кут між векторами через скалярний добуток"],
+      [18, "Рівняння прямої, що перпендикулярна вектору нормалі і проходить через точку М(x0,y0)"],
+      [19, "рівняння прямої що паралельна вектору(вивести)"],
+      [20, "рівняння прямої, що проходить через 2 точки(вивести)"],
+      [21, "рівняння прямої у відрізках(вивести)"],
+      [22, "Теорема про арифметичні властивості: границю суми різниці/границю добутку/границю частки"],
+      [23, "Теорема якщо послідовність збіжна, то вона обмежена з доведенням"],
+      [24, "Границя функції в точці"],
+      [25, "Означення за Коші"],
+      [26, "Означення за Гейне"],
+      [27, "Ліва та правостороння границя функцій"],
+      [28, "Точки розриву першого та другого роду"],
+      [29, "Неперервність функцій в точці"],
+      [30, "Формулювання суттєвості????"],
+      [31, "Теорема Веєштрасса без доведення"],
+      [32, "Теорема Больцана-Коші без доведення"],
+      [33, "Друга Теорема Веєштраса про наближення неперервної функції многочленом"],
+      [34, "Означення похідної в точці"],
+      [35, "Геометричний та механічний зміст"],
+      [36, "Рівняння дотичної з доведенням"],
+      [37, "Теорема про зв'язок між неперервністю та диференційованістю(існування похідної)"],
+      [38, "Арифметичні властивості похідної:<br>• Похідна добутку<br>• похідна композиції<br>• похідна від частки<br>• похідна оберненої функції"],
+      [39, "Таблиця похідних"],
+      [40, "Теорема Ферма з доведенням"],
+      [41, "Теорема Ралля з доведенням"],
+      [42, "Теорема Лагранжа з доведенням"],
+      [43, "Похідні вищих варіантів"],
+      [44, "Формула Тейлора для многочлена"]
+    ];
+
+    function renderCalculusQuestions(query = '') {
+      const container = document.getElementById('ma-questions-list-container');
+      const counter = document.getElementById('ma-question-counter');
+      const badge = document.getElementById('ma-question-badge');
+      if (!container) return;
+      const q = query.trim().toLocaleLowerCase('uk');
+      const filtered = calculusQuestions.filter(item =>
+        `${item[0]} ${item[1].replace(/<br>/g, ' ')}`.toLocaleLowerCase('uk').includes(q)
+      );
+      if (counter) counter.textContent = `${filtered.length} / ${calculusQuestions.length} питань`;
+      if (badge) badge.textContent = `Питань: ${filtered.length}`;
+      if (!filtered.length) {
+        container.innerHTML = '<p class="empty-state">Нічого не знайдено за цим запитом. Спробуй інше ключове слово.</p>';
+        return;
+      }
+      container.innerHTML = filtered.map(item => `
+        <article class="panel question-item-card">
+          <div class="ticket-solution-meta">
+            <span class="tag">Означення · Питання №${item[0]}</span>
+          </div>
+          <h4>${item[0]}. ${item[1]}</h4>
+        </article>
+      `).join('');
+    }
+
+    function filterCalculusQuestions() {
+      const input = document.getElementById('ma-question-search');
+      renderCalculusQuestions(input ? input.value : '');
+    }
+
     renderPlan();
     renderTopicNotes();
     renderQuestionsList();
+    renderCalculusQuestions();
     calcK();
     showCard();
     showStudyMode('bed');
