@@ -218,6 +218,19 @@
     .ticket-solution-card p { margin: 0; color: #5c4a51; font-size: .89rem; }
     .proof-box { padding: 13px 15px; border-radius: 12px; background: #f7f0e6; border-left: 3px solid var(--berry); color: var(--ink); font-size: .87rem; line-height: 1.65; }
     .proof-box b { color: var(--berry-dark); }
+    .proof-box[hidden] { display: none; }
+
+    .questions-level-block { margin-bottom: 26px; }
+    .questions-level-block:last-child { margin-bottom: 0; }
+    .questions-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
+    .question-item-card { padding: 22px 24px; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+    .question-item-card.mint { background: var(--mint); border-color: #d0dfd0; box-shadow: none; }
+    .question-item-card.butter { background: var(--butter); border-color: #ecdda9; box-shadow: none; }
+    .question-item-card h4 { margin: 0; font-family: Georgia, serif; font-size: 1.3rem; font-weight: 500; line-height: 1.3; color: var(--ink); }
+    .proof-toggle-btn { min-height: 38px; padding: 0 15px; font-size: .84rem; border-color: #e4cad1; background: var(--pink-light); color: var(--berry-dark); }
+    .proof-toggle-btn:hover { background: var(--pink); }
+    .proof-toggle-btn.active { border-color: var(--berry); background: var(--berry); color: white; }
+    .question-item-card .proof-box { width: 100%; }
 
     .study-modes { display: grid; grid-template-columns: repeat(5, 1fr); gap: 11px; margin-bottom: 18px; }
     .mode-button { min-height: 112px; padding: 17px 15px; border: 1px solid var(--line); border-radius: 17px; background: var(--surface); color: var(--ink); text-align: left; transition: .2s; }
@@ -300,6 +313,7 @@
         <nav class="tabs" aria-label="Розділи">
           <button id="tb-calc" class="active" onclick="tab('calc')"><span>Мій білет і розв’язки</span><small>Головна</small></button>
           <div class="sidebar-label" style="margin-top:8px;padding-left:4px">Інші режими</div>
+          <button id="tb-questions" onclick="tab('questions')"><span>Список питань</span><small>Nivel 1–4</small></button>
           <button id="tb-cards" onclick="tab('cards')"><span>Картки</span><small>Повторення</small></button>
           <button id="tb-plan" onclick="tab('plan')"><span>План</span><small>Помодоро</small></button>
           <button id="tb-examples" onclick="tab('examples')"><span>Приклади</span><small>Конспект</small></button>
@@ -333,6 +347,14 @@
         </div>
       </div>
       <div id="ticket-solutions-block" class="ticket-solutions-section" aria-live="polite"></div>
+    </section>
+
+    <section id="sec-questions" hidden>
+      <div class="section-heading">
+        <div><span class="eyebrow">Усі питання колоквіуму</span><h2>Список питань Nivel 1–4</h2></div>
+        <p>Усі питання відсортовані за рівнями Nivel 1–4. Натисни кнопку «Доведення» під потрібним питанням, щоб розгорнути розв’язок.</p>
+      </div>
+      <div id="questions-list-container"></div>
     </section>
 
     <section id="sec-plan" hidden>
@@ -529,7 +551,7 @@
     let simTicketIndex = 0;
 
     function tab(name) {
-      ['calc', 'plan', 'cards', 'examples', 'study', 'sim'].forEach(t => {
+      ['calc', 'questions', 'plan', 'cards', 'examples', 'study', 'sim'].forEach(t => {
         document.getElementById('sec-' + t).hidden = t !== name;
         document.getElementById('tb-' + t).classList.toggle('active', t === name);
       });
@@ -964,8 +986,60 @@
       }, 1000);
     }
 
+    function toggleQuestionProof(btn) {
+      const card = btn.closest('.question-item-card');
+      if (!card) return;
+      const box = card.querySelector('.proof-box');
+      if (!box) return;
+      const isHidden = box.hidden;
+      box.hidden = !isHidden;
+      btn.classList.toggle('active', isHidden);
+      btn.setAttribute('aria-expanded', String(isHidden));
+      const arrow = btn.querySelector('.proof-arrow');
+      if (arrow) arrow.textContent = isHidden ? '↑' : '↓';
+    }
+
+    function renderQuestionsList() {
+      const container = document.getElementById('questions-list-container');
+      if (!container) return;
+      const sorted = [...D].sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+      const levels = [1, 2, 3, 4];
+      container.innerHTML = levels.map(nivel => {
+        const items = sorted.filter(item => item[0] === nivel);
+        const styleClass = nivel === 3 ? 'mint' : nivel === 4 ? 'butter' : '';
+        const cardsHTML = items.map(item => `
+          <article class="panel question-item-card ${styleClass}">
+            <div class="ticket-solution-meta">
+              <span class="tag">Nivel ${item[0]} · Питання №${item[1]}</span>
+            </div>
+            <h4>${item[2]}</h4>
+            <button type="button" class="button proof-toggle-btn" aria-expanded="false" onclick="toggleQuestionProof(this)">
+              <span>Доведення</span>
+              <span class="proof-arrow" aria-hidden="true">↓</span>
+            </button>
+            <div class="proof-box" hidden>${item[3]}</div>
+          </article>
+        `).join('');
+        return `
+          <div class="questions-level-block">
+            <div class="panel ticket-solutions-header">
+              <div>
+                <span class="eyebrow">Рівень ${nivel}</span>
+                <h3>Nivel ${nivel}</h3>
+              </div>
+              <div class="ticket-badges">
+                <span class="ticket-badge">Питань: ${items.length}</span>
+              </div>
+            </div>
+            <div class="questions-grid">${cardsHTML}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
     renderPlan();
     renderTopicNotes();
+    renderQuestionsList();
     calcK();
     showCard();
     showStudyMode('bed');
