@@ -982,12 +982,21 @@
         const styleClass = slot.nivel === 3 ? 'mint' : slot.nivel === 4 ? 'butter' : '';
         if (mat.exactCard) {
           const boxLabel = slot.nivel === 1 ? 'Означення / формулювання:' : slot.nivel === 2 ? 'Розв’язок:' : 'Повне доведення:';
+          const boardImgs = slot.nivel === 4 ? nivel4BoardImages[slot.qNum] : null;
           return `<article class="panel ticket-solution-card ${styleClass}">
             <div class="ticket-solution-meta">
               <span class="tag">Білет №${k} · Nivel ${slot.nivel} · Питання №${slot.qNum}</span>
               <span class="mini-label">${slot.formula}</span>
             </div>
             <h4>${mat.exactCard[2]}</h4>
+            ${boardImgs ? `
+            <div class="question-actions">
+              <button type="button" class="button proof-toggle-btn" aria-expanded="false" onclick="toggleBoardScreen(this)">
+                <span>Скрін з дошки</span>
+                <span class="proof-arrow" aria-hidden="true">↓</span>
+              </button>
+            </div>
+            <div class="proof-box board-screen-box" hidden>${boardImgs.map((src, i) => `<img src="${src}" alt="Скрін з дошки: ${mat.exactCard[2]}${boardImgs.length > 1 ? ` (частина ${i + 1})` : ''}" class="board-screen-img" loading="lazy">`).join('')}</div>` : ''}
             <div class="proof-box">
               <b>${boxLabel}</b><br>
               ${mat.exactCard[3]}
@@ -1200,7 +1209,7 @@
     }
 
     function toggleBoardScreen(btn) {
-      const card = btn.closest('.question-item-card');
+      const card = btn.closest('.question-item-card, .ticket-solution-card');
       if (!card) return;
       const box = card.querySelector('.board-screen-box');
       if (!box) return;
