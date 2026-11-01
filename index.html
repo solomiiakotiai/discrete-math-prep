@@ -233,7 +233,11 @@
     .proof-toggle-btn { min-height: 38px; padding: 0 15px; font-size: .84rem; border-color: #522c3e; background: var(--pink-light); color: var(--berry-dark); }
     .proof-toggle-btn:hover { background: var(--pink); border-color: var(--berry); color: #fff; }
     .proof-toggle-btn.active { border-color: var(--berry-btn); background: var(--berry-btn); color: white; }
+    .question-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
     .question-item-card .proof-box { width: 100%; }
+    .board-screen-box { display: grid; gap: 12px; width: 100%; }
+    .board-screen-box[hidden] { display: none; }
+    .board-screen-img { display: block; width: 100%; max-width: 820px; height: auto; border-radius: 10px; border: 1px solid #332630; }
 
     .study-modes { display: grid; grid-template-columns: repeat(5, 1fr); gap: 11px; margin-bottom: 18px; }
     .mode-button { min-height: 112px; padding: 17px 15px; border: 1px solid var(--line); border-radius: 17px; background: var(--surface); color: var(--ink); text-align: left; transition: .2s; }
@@ -1175,10 +1179,30 @@
       }, 1000);
     }
 
+    const nivel4BoardImages = {
+      1: ['images/nivel4-1-bernoulli.jpg'],
+      2: ['images/nivel4-2-polynomial.jpg'],
+      3: ['images/nivel4-3-inclusion-exclusion.jpg'],
+      4: ['images/nivel4-4-cauchy-1.jpg', 'images/nivel4-4-cauchy-2.jpg']
+    };
+
     function toggleQuestionProof(btn) {
       const card = btn.closest('.question-item-card');
       if (!card) return;
-      const box = card.querySelector('.proof-box');
+      const box = card.querySelector('.question-proof-content');
+      if (!box) return;
+      const isHidden = box.hidden;
+      box.hidden = !isHidden;
+      btn.classList.toggle('active', isHidden);
+      btn.setAttribute('aria-expanded', String(isHidden));
+      const arrow = btn.querySelector('.proof-arrow');
+      if (arrow) arrow.textContent = isHidden ? '↑' : '↓';
+    }
+
+    function toggleBoardScreen(btn) {
+      const card = btn.closest('.question-item-card');
+      if (!card) return;
+      const box = card.querySelector('.board-screen-box');
       if (!box) return;
       const isHidden = box.hidden;
       box.hidden = !isHidden;
@@ -1196,19 +1220,30 @@
       container.innerHTML = levels.map(nivel => {
         const items = sorted.filter(item => item[0] === nivel);
         const styleClass = nivel === 3 ? 'mint' : nivel === 4 ? 'butter' : '';
-        const cardsHTML = items.map(item => `
+        const cardsHTML = items.map(item => {
+          const boardImgs = item[0] === 4 ? nivel4BoardImages[item[1]] : null;
+          return `
           <article class="panel question-item-card ${styleClass}">
             <div class="ticket-solution-meta">
               <span class="tag">Nivel ${item[0]} · Питання №${item[1]}</span>
             </div>
             <h4>${item[2]}</h4>
-            <button type="button" class="button proof-toggle-btn" aria-expanded="false" onclick="toggleQuestionProof(this)">
-              <span>Доведення</span>
-              <span class="proof-arrow" aria-hidden="true">↓</span>
-            </button>
-            <div class="proof-box" hidden>${item[3]}</div>
+            <div class="question-actions">
+              <button type="button" class="button proof-toggle-btn" aria-expanded="false" onclick="toggleQuestionProof(this)">
+                <span>Доведення</span>
+                <span class="proof-arrow" aria-hidden="true">↓</span>
+              </button>
+              ${boardImgs ? `
+              <button type="button" class="button proof-toggle-btn" aria-expanded="false" onclick="toggleBoardScreen(this)">
+                <span>Скрін з дошки</span>
+                <span class="proof-arrow" aria-hidden="true">↓</span>
+              </button>` : ''}
+            </div>
+            <div class="proof-box question-proof-content" hidden>${item[3]}</div>
+            ${boardImgs ? `<div class="proof-box board-screen-box" hidden>${boardImgs.map((src, idx) => `<img src="${src}" alt="Скрін з дошки: ${item[2]}${boardImgs.length > 1 ? ` (частина ${idx + 1})` : ''}" class="board-screen-img" loading="lazy">`).join('')}</div>` : ''}
           </article>
-        `).join('');
+        `;
+        }).join('');
         return `
           <div class="questions-level-block">
             <div class="panel ticket-solutions-header">
