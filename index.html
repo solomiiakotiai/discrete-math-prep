@@ -405,7 +405,7 @@
         <button type="button" class="landing-subject-btn" onclick="openCalculus()">
           <span>Математичний аналіз</span>
         </button>
-        <button type="button" class="landing-subject-btn">
+        <button type="button" class="landing-subject-btn" onclick="openAlgebra()">
           <span>Алгебра та геометрія</span>
         </button>
       </div>
@@ -617,6 +617,75 @@
     </main>
   </div>
 
+  <div class="app-shell" id="algebra-app" hidden>
+    <aside class="sidebar" aria-label="Бічна панель навігації — Алгебра та геометрія">
+      <div class="sidebar-top">
+        <div class="sidebar-header-row">
+          <a class="brand" href="#top" onclick="event.preventDefault();openLanding()" aria-label="Повернутись на титульну сторінку">
+            <span class="brand-mark">∑</span>
+            <span>Математика без паніки<small>Твій простір підготовки</small></span>
+          </a>
+        </div>
+        <div class="top-meta"><span class="live-dot"></span><span>Алгебра та геометрія · Nivel 1–4</span></div>
+        <div class="sidebar-label">Головна сторінка</div>
+        <nav class="tabs" aria-label="Розділи алгебри та геометрії">
+          <button type="button" onclick="openLanding()"><span>← Вибір предмета</span><small>Титульна</small></button>
+          <button id="tb-al-calc" class="active" onclick="alTab('calc')"><span>Мій білет і розв’язки</span><small>Головна</small></button>
+          <div class="sidebar-label" style="margin-top:8px;padding-left:4px">Інші режими</div>
+          <button id="tb-al-questions" onclick="alTab('questions')"><span>Список питань</span><small>Nivel 1–4</small></button>
+          <button id="tb-al-sim" onclick="alTab('sim')"><span>Симулятор</span><small>7 хв</small></button>
+        </nav>
+      </div>
+      <div class="sidebar-card">
+        <span class="eyebrow">Навчайся у своєму темпі</span>
+        <h2>Складне стає <em>простішим.</em></h2>
+        <p>Усе для підготовки до колоквіуму з алгебри та геометрії — зібране в одному затишному місці.</p>
+      </div>
+    </aside>
+
+    <main id="al-top">
+      <section id="sec-al-calc">
+        <div class="section-heading">
+          <div><span class="eyebrow">Головна · Розрахунок білета та доведення</span><h2>Твій білет, питання Nivel 1–4 та розв’язки</h2></div>
+          <p>Введи номер свого варіанта k, щоб одразу побачити номери питань, Nivel та повні розв’язки й доведення.</p>
+        </div>
+        <div class="calc-grid">
+          <div class="panel calc-panel">
+            <span class="mini-label">Персональний набір</span>
+            <h3>Розрахуй варіант k</h3>
+            <p class="helper">Номер варіанта — ціле число від 1 до 100.</p>
+            <div class="input-row">
+              <input type="number" id="al-k-val" min="1" max="100" value="1" aria-label="Номер варіанта k" onkeydown="if(event.key==='Enter'){event.preventDefault();alCalcK();}">
+              <button class="button primary" onclick="alCalcK()">Показати білет <span aria-hidden="true">→</span></button>
+            </div>
+            <div id="al-k-res" aria-live="polite"></div>
+          </div>
+        </div>
+        <div id="al-ticket-block" class="ticket-solutions-section" aria-live="polite"></div>
+      </section>
+
+      <section id="sec-al-questions" hidden>
+        <div class="section-heading">
+          <div><span class="eyebrow">Усі питання колоквіуму</span><h2>Список питань Nivel 1–4</h2></div>
+          <p>Усі питання відсортовані за рівнями Nivel 1–4. Натисни кнопку під потрібним питанням, щоб розгорнути відповідь. У Nivel 2 розв’язок рахується для k з поля на сторінці білета.</p>
+        </div>
+        <div id="al-questions-container"></div>
+      </section>
+
+      <section id="sec-al-sim" hidden>
+        <div class="panel sim-panel">
+          <span class="eyebrow">Тренування перед іспитом</span>
+          <h2>Симуляція колоквіуму</h2>
+          <p>Сім хвилин на білет — як у справжніх умовах. Зосередься на головному й запиши план відповіді.</p>
+          <div class="sim-time" id="al-sim-timer">07:00</div>
+          <button class="button primary" id="al-sim-btn" onclick="alStartSim()">Почати симуляцію <span aria-hidden="true">→</span></button>
+        </div>
+        <div id="al-sim-ticket"></div>
+      </section>
+      <footer>Зроблено для спокійної та впевненої підготовки <span aria-hidden="true">✳</span></footer>
+    </main>
+  </div>
+
   <script>
     const D = [
       [1, 1, "Підмножина", "Множина A називається <b>підмножиною</b> множини B (позначається A ⊆ B), якщо кожен елемент множини A є водночас елементом множини B.<br><b>Формальний опис:</b> A ⊆ B ⇔ ∀x (x ∈ A ⇒ x ∈ B)."],
@@ -717,6 +786,7 @@
     function openDiscreteMath() {
       document.getElementById('landing-screen').hidden = true;
       document.getElementById('calculus-app').hidden = true;
+      document.getElementById('algebra-app').hidden = true;
       document.getElementById('discrete-app').hidden = false;
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -724,6 +794,7 @@
     function openCalculus() {
       document.getElementById('landing-screen').hidden = true;
       document.getElementById('discrete-app').hidden = true;
+      document.getElementById('algebra-app').hidden = true;
       document.getElementById('calculus-app').hidden = false;
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -731,6 +802,7 @@
     function openLanding() {
       document.getElementById('discrete-app').hidden = true;
       document.getElementById('calculus-app').hidden = true;
+      document.getElementById('algebra-app').hidden = true;
       document.getElementById('landing-screen').hidden = false;
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -1355,5 +1427,6 @@
     showCard();
     showStudyMode('bed');
   </script>
+  <script src="algebra.js"></script>
 </body>
 </html>
