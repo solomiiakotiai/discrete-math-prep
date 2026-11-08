@@ -33,7 +33,7 @@ function alMatBlock(M, fmt) {
   const cells = M.map(r => r.map(fmt));
   const w = Math.max.apply(null, cells.map(r => Math.max.apply(null, r.map(s => s.length))));
   const lines = cells.map(r => '( ' + r.map(s => s.padStart(w, ' ')).join('  ') + ' )');
-  return '<div class="code" style="white-space:pre;overflow-x:auto">' + lines.join('\n') + '</div>';
+  return '<div class="code" style="white-space:pre;overflow-x:auto;font-size:.74rem;line-height:1.35">' + lines.join('\n') + '</div>';
 }
 
 /* ======================================================================
@@ -134,12 +134,12 @@ const AL_N1 = [
     '• <b>Вільні змінні</b> — це змінні, які відповідають <b>усім іншим стовпчикам</b> (у яких немає ведучих елементів).'],
   [17, 'Добуток матриць',
     '<b>Означення.</b> Нехай є матриця A розміру <b>m × n</b> та матриця B розміру <b>n × k</b>:' +
-    '<div class="code" style="white-space:pre;overflow-x:auto">    ⎛ a₁₁  a₁₂  …  a₁ₙ ⎞            ⎛ b₁₁  b₁₂  …  b₁ₖ ⎞\n' +
+    '<div class="code" style="white-space:pre;overflow-x:auto;font-size:.74rem;line-height:1.35">    ⎛ a₁₁  a₁₂  …  a₁ₙ ⎞            ⎛ b₁₁  b₁₂  …  b₁ₖ ⎞\n' +
     'A = ⎜ a₂₁  a₂₂  …  a₂ₙ ⎟  (m × n),   B = ⎜ b₂₁  b₂₂  …  b₂ₖ ⎟  (n × k).\n' +
     '    ⎜  …    …   …   …  ⎟            ⎜  …    …   …   …  ⎟\n' +
     '    ⎝ aₘ₁  aₘ₂  …  aₘₙ ⎠            ⎝ bₙ₁  bₙ₂  …  bₙₖ ⎠</div>' +
     'Тоді їхній <b>добуток A · B</b> — це така матриця C розміру <b>m × k</b>:' +
-    '<div class="code" style="white-space:pre;overflow-x:auto">    ⎛ c₁₁  c₁₂  …  c₁ₖ ⎞\n' +
+    '<div class="code" style="white-space:pre;overflow-x:auto;font-size:.74rem;line-height:1.35">    ⎛ c₁₁  c₁₂  …  c₁ₖ ⎞\n' +
     'C = ⎜ c₂₁  c₂₂  …  c₂ₖ ⎟  (m × k),\n' +
     '    ⎜  …    …   …   …  ⎟\n' +
     '    ⎝ cₘ₁  cₘ₂  …  cₘₖ ⎠</div>' +
@@ -188,7 +188,7 @@ function alN2Sol1(k) {
     ? 'ℤ (множина цілих чисел — містить 1/1 = 1)'
     : '{ m / ' + n + 'ˢ  |  m ∈ ℤ, s ∈ ℕ ∪ {0} } (усі дроби зі степенем ' + n + ' у знаменнику; містить 1/' + n + ' при m = 1, s = 1)';
   return '<b>Як оформлювати на колоквіумі:</b>' +
-    '<div class="code" style="white-space:pre;overflow-x:auto">k mod* 5 = ' + n + '\n' +
+    '<div class="code" style="white-space:pre-wrap">k mod* 5 = ' + n + '\n' +
     'D = ' + setDesc + '\n' +
     'операції: звичайні додавання (+) та множення (·)\n' +
     'Ненульове число, у якого немає оберненого за другою операцією = ' + nonUnit + '  (бо 1/' + nonUnit + ' ∉ D)</div>' +
@@ -201,7 +201,7 @@ function alN2Sol1(k) {
 function alN2Sol2(k) {
   const c = alMod(k, 4);
   return '<b>Як оформлювати на колоквіумі:</b>' +
-    '<div class="code" style="white-space:pre;overflow-x:auto">k mod* 4 = ' + c + '\n' +
+    '<div class="code" style="white-space:pre-wrap">k mod* 4 = ' + c + '\n' +
     'D = { 5n  |  n ∈ ℕ ∪ {0} } = { 0, 5, 10, 15, 20, … }\n' +
     'операція: + (звичайне додавання)\n' +
     'нейтральний елемент: 0\n' +
@@ -216,7 +216,7 @@ function alN2Sol3(k) {
   const a = alMod(k, 10), b = alMod(k, 11);
   const lin = 2 * a, free = a * a + b * b;
   return '<b>Як оформлювати на колоквіумі:</b>' +
-    '<div class="code" style="white-space:pre;overflow-x:auto">a = k mod* 10 = ' + a + ',   b = k mod* 11 = ' + b + '\n' +
+    '<div class="code" style="white-space:pre-wrap">a = k mod* 10 = ' + a + ',   b = k mod* 11 = ' + b + '\n' +
     'рівняння: x² − ' + lin + 'x + ' + free + ' = 0\n' +
     'корені: z₁ = ' + a + ' + ' + b + 'i,   z₂ = ' + a + ' − ' + b + 'i</div>' +
     '<b>Pista (як швидко отримати за теоремою Вієта):</b><br>' +
@@ -230,7 +230,7 @@ function alN2Sol3(k) {
 function alN2Sol4(k) {
   const n = alMod(k, 8), N = n + 1;
   return '<b>Як оформлювати на колоквіумі (у тригонометричній формі):</b>' +
-    '<div class="code" style="white-space:pre;overflow-x:auto">k mod* 8 = ' + n + '\n' +
+    '<div class="code" style="white-space:pre-wrap">k mod* 8 = ' + n + '\n' +
     'z = 1 · (cos(2π/' + N + ') + i sin(2π/' + N + '))\n' +
     'z̄ = 1 · (cos(−2π/' + N + ') + i sin(−2π/' + N + '))\n' +
     'z^(' + n + ') = 1^(' + n + ') · (cos(' + (2 * n) + 'π/' + N + ') + i sin(' + (2 * n) + 'π/' + N + ')) = cos(−2π/' + N + ' + 2π) + i sin(−2π/' + N + ' + 2π) = z̄</div>' +
@@ -258,7 +258,7 @@ function alN2Sol5(k) {
   const ycoef = '(' + alNum(y[0]) + ')·Р₁ + (' + alNum(y[1]) + ')·Р₂ + (' + alNum(y[2]) + ')·Р₃';
   const lhsC = y[0] * c[0] + y[1] * c[1] + y[2] * c[2];
   return '<b>Як оформлювати на колоквіумі (просто записати обидві СЛР і вказати розв’язок першої):</b>' +
-    '<div class="code" style="white-space:pre;overflow-x:auto">k mod* 2 = ' + p + ',   k mod* 3 = ' + q + '\n\n' +
+    '<div class="code" style="white-space:pre-wrap">k mod* 2 = ' + p + ',   k mod* 3 = ' + q + '\n\n' +
     '1) СЛР зі стовпчиком (' + b.join(', ') + ') — МАЄ розв’язок:\n' + sys(b) + '\n' +
     'Розв’язок: (x, y, z) = (' + sol.join(', ') + ')\n\n' +
     '2) СЛР зі стовпчиком (' + c.join(', ') + ') — НЕ має розв’язку:\n' + sys(c) + '</div>' +
@@ -272,7 +272,7 @@ function alN2Sol6(k) {
   const A = [[a, b, c], [0, 1, 0], [0, 0, 1]];
   const Ai = [[alFrac(1, a), alFrac(-b, a), alFrac(-c, a)], [alFrac(0), alFrac(1), alFrac(0)], [alFrac(0), alFrac(0), alFrac(1)]];
   return '<b>Як оформлювати на колоквіумі (просто вказати обидві матриці):</b>' +
-    '<div class="code" style="white-space:pre;overflow-x:auto">k mod* 5 = ' + a + ',   k mod* 6 = ' + b + ',   k mod* 7 = ' + c + '\n' +
+    '<div class="code" style="white-space:pre-wrap">k mod* 5 = ' + a + ',   k mod* 6 = ' + b + ',   k mod* 7 = ' + c + '\n' +
     'Рядок за умовою: (' + a + ', ' + b + ', ' + c + ')</div>' +
     '<b>Матриця A:</b>' + alMatBlock(A) +
     '<b>Обернена матриця A⁻¹:</b>' + alMatBlock(Ai, alFs) +
@@ -297,12 +297,12 @@ function alN2Sol7(k) {
   const lhsOrder = used.map((_, i) => 'E' + (N - i)).join(' · ');
   const eBlocks = used.map((u, i) => '<b>E' + (i + 1) + ' = ' + u.name + '</b> (' + u.d + '):' + alMatBlock(u.m)).join('');
   return '<b>Як оформлювати на колоквіумі:</b>' +
-    '<div class="code" style="white-space:pre;overflow-x:auto">k mod* 4 = ' + m + '   ⇒   кількість елементарних матриць: (k mod* 4) + 2 = ' + N + '</div>' +
+    '<div class="code" style="white-space:pre-wrap">k mod* 4 = ' + m + '   ⇒   кількість елементарних матриць: (k mod* 4) + 2 = ' + N + '</div>' +
     '<b>Матриця A:</b>' + alMatBlock(prod) +
     '<b>Елементарні матриці E₁, E₂, …, E' + N + ' (є всі три типи, немає взаємно обернених):</b><br>' +
     eBlocks +
     '<b>Рівність розкладу (увага на порядок множення зліва!):</b>' +
-    '<div class="code" style="white-space:pre;overflow-x:auto">' + lhsOrder + ' = A</div>' +
+    '<div class="code" style="white-space:pre-wrap">' + lhsOrder + ' = A</div>' +
     '<b>Pista (як отримати A без довгого множення матриць):</b><br>' +
     'Беремо одиничну матрицю E і послідовно робимо з її рядками елементарні перетворення 1-е (E₁), 2-е (E₂), …, ' + N + '-е (E' + N + '). За Тв. 4 (Nivel 3.5) кожне перетворення — це домноження <b>зліва</b> на відповідну Eᵢ, тому результат дорівнює саме <b>' + lhsOrder + ' · E = ' + lhsOrder + ' = A</b>!';
 }
@@ -332,11 +332,11 @@ function alN2Sol8(k) {
   const p1 = a_t1 * b11 * c1s, p2 = a_t2 * b21 * c1s, p3 = a_t1 * b12 * c2s, p4 = a_t2 * b22 * c2s;
 
   return '<b>Як оформлювати на колоквіумі:</b>' +
-    '<div class="code" style="white-space:pre;overflow-x:auto">t = k mod* 3 = ' + t + ',   s = (k mod* 2) + 1 = ' + s + ',   k mod* 8 = ' + target + '</div>' +
+    '<div class="code" style="white-space:pre-wrap">t = k mod* 3 = ' + t + ',   s = (k mod* 2) + 1 = ' + s + ',   k mod* 8 = ' + target + '</div>' +
     '<b>Матриці A (3 × 2), B (2 × 2), C (2 × 3)</b> (у кожній усі елементи ненульові й попарно різні):' +
     alMatBlock(A) + alMatBlock(B) + alMatBlock(C) +
     '<b>Обчислення елемента (ABC)<sub>' + t + ',' + s + '</sub> через індекси, а потім підстановка чисел:</b>' +
-    '<div class="code" style="white-space:pre;overflow-x:auto">(ABC)_(' + t + ',' + s + ') = (AB)_(' + t + ',1)·c₁,' + s + ' + (AB)_(' + t + ',2)·c₂,' + s + ' =\n' +
+    '<div class="code" style="white-space:pre-wrap">(ABC)_(' + t + ',' + s + ') = (AB)_(' + t + ',1)·c₁,' + s + ' + (AB)_(' + t + ',2)·c₂,' + s + ' =\n' +
     '          = (a_' + t + ',1·b₁,₁ + a_' + t + ',2·b₂,₁)·c₁,' + s + ' + (a_' + t + ',1·b₁,₂ + a_' + t + ',2·b₂,₂)·c₂,' + s + ' =\n' +
     '          = a_' + t + ',1·b₁,₁·c₁,' + s + ' + a_' + t + ',2·b₂,₁·c₁,' + s + ' + a_' + t + ',1·b₁,₂·c₂,' + s + ' + a_' + t + ',2·b₂,₂·c₂,' + s + ' =\n' +
     '          = ' + a_t1 + '·' + b11 + '·(' + alNum(c1s) + ') + ' + a_t2 + '·' + b21 + '·(' + alNum(c1s) + ') + ' + a_t1 + '·' + b12 + '·(' + alNum(c2s) + ') + ' + a_t2 + '·' + b22 + '·(' + alNum(c2s) + ') =\n' +
@@ -352,7 +352,7 @@ function alN2Sol9(k) {
     ? '1·v₁ + 1·v₂ = 1·v₃ = (1, 1)'
     : '1·v₁ + 1·v₂ + 0·v₃ + 0·v₄ = 0·v₁ + 0·v₂ + 1·v₃ + 0·v₄ = 0·v₁ − 1·v₂ + 0·v₃ + 1·v₄ = (1, 1)';
   return '<b>Як оформлювати на колоквіумі:</b>' +
-    '<div class="code" style="white-space:pre;overflow-x:auto">k mod* 2 = ' + p + '   ⇒   кількість векторів: ' + m + ',   кількість комбінацій: ' + s + '\n' +
+    '<div class="code" style="white-space:pre-wrap">k mod* 2 = ' + p + '   ⇒   кількість векторів: ' + m + ',   кількість комбінацій: ' + s + '\n' +
     vs.map((v, i) => 'v' + (i + 1) + ' = ' + vecStr(v)).join('\n') + '\n\n' +
     'Рівні лінійні комбінації:\n' + chain + '</div>' +
     '<b>Перевірка умов:</b><br>' +
@@ -410,7 +410,7 @@ const AL_N3 = [
     '⇔ &nbsp;m = ⁿ√r,<br>' +
     '<b>β ∈ { …, &nbsp;<span style="text-decoration:underline">α/n − 2π/n</span>, &nbsp;<b>α/n</b>, &nbsp;α/n + 2π/n, &nbsp;α/n + 4π/n, &nbsp;…, &nbsp;<span style="text-decoration:underline">α/n + 2π(n−1)/n</span>, &nbsp;<b>α/n + 2πn/n</b>, &nbsp;… }</b><br><br>' +
     '<b>Чому нескінченний список звужується до n значень (з’єднуємо однакові кути, що відрізняються на 2π):</b>' +
-    '<div class="code" style="white-space:pre;overflow-x:auto">… ,  α/n − 2π/n ,  [ α/n ,  α/n + 2π/n ,  … ,  α/n + 2π(n−1)/n ] ,  α/n + 2πn/n , …\n' +
+    '<div class="code" style="white-space:pre;overflow-x:auto;font-size:.74rem;line-height:1.35">… ,  α/n − 2π/n ,  [ α/n ,  α/n + 2π/n ,  … ,  α/n + 2π(n−1)/n ] ,  α/n + 2πn/n , …\n' +
     '         │            ▲                                    ▲              │\n' +
     '         │            └─────────── різниця 2π ─────────────┼──────────────┘\n' +
     '         └──────────────────────── різниця 2π ─────────────┘</div>' +
@@ -425,7 +425,7 @@ const AL_N3 = [
     '<b>Твердження.</b> Рівняння параболи в канонічній СК має вигляд <b>x² = 2py</b>, де p — відстань від фокуса до директриси (фокальний параметр).<br><br>' +
     '<b>Ілюстрація та канонічна СК (бажано намалювати):</b><br>' +
     'Вісь Oy проходить через фокус F перпендикулярно до директриси, а вісь Ox — посередині між фокусом і директрисою. Тоді F(0, p/2), а директриса має рівняння y = −p/2.' +
-    '<div class="code" style="white-space:pre;overflow-x:auto">          y ▲\n' +
+    '<div class="code" style="white-space:pre;overflow-x:auto;font-size:.74rem;line-height:1.35">          y ▲\n' +
     '            │       • A(x, y)\n' +
     '      F(0,p/2) •   ╱ │\n' +
     '      p/2 ↕ │    ╱   │ |y + p/2| (відстань до директриси)\n' +
@@ -453,7 +453,7 @@ const AL_N3 = [
     '(і аналогічне твердження для правих фокуса та директриси).<br>' +
     'Тут e = c/a > 1 — ексцентриситет гіперболи, F₁(−c, 0) — лівий фокус, Δ₁ : x = −a/e — ліва директриса.<br><br>' +
     '<b>Схематична ілюстрація (достатньо однієї гілки та однієї директриси):</b>' +
-    '<div class="code" style="white-space:pre;overflow-x:auto">                  y ▲\n' +
+    '<div class="code" style="white-space:pre;overflow-x:auto;font-size:.74rem;line-height:1.35">                  y ▲\n' +
     '        ліва гілка  │  Δ₁: x = −a/e\n' +
     '     A(x,y) •───────┼──┐ (відстань d)\n' +
     '           ╱ \\      │  │          AF₁\n' +
@@ -485,7 +485,7 @@ const AL_N3 = [
     'Розберемо почергово кожен із трьох випадків елементарної матриці:<br><br>' +
     '<b>1) Перестановка i-го та j-го рядків: C = E(i, j) · A.</b><br>' +
     'У матриці E(i, j) в i-му рядку єдина одиниця стоїть на <b>j-му місці</b>, у j-му рядку — на <b>i-му місці</b>, а в іншому рядку t (t ≠ i, j) — на <b>t-му місці</b>:' +
-    '<div class="code" style="white-space:pre;overflow-x:auto">      ⎛ 1  0  …  0  …  0  …  0 ⎞   ⎛ a₁₁  …  a₁ₙ ⎞   ⎛ c₁₁  …  c₁ₙ ⎞\n' +
+    '<div class="code" style="white-space:pre;overflow-x:auto;font-size:.74rem;line-height:1.35">      ⎛ 1  0  …  0  …  0  …  0 ⎞   ⎛ a₁₁  …  a₁ₙ ⎞   ⎛ c₁₁  …  c₁ₙ ⎞\n' +
     '      ⎜ …  …  …  …  …  …  …  … ⎟   ⎜  …   …   …  ⎟   ⎜  …   …   …  ⎟\n' +
     'i-й → ⎜ 0  …  0  0  …  1  …  0 ⎟ × ⎜  …  aₜₛ  …  ⎟ = ⎜  …  cₜₛ  …  ⎟\n' +
     '      ⎜ …  …  …  …  …  …  …  … ⎟   ⎜  …   …   …  ⎟   ⎜  …   …   …  ⎟\n' +
@@ -505,7 +505,7 @@ const AL_N3 = [
     '⇒ i-й рядок перетворився на j-й, j-й — на i-й, інші рядки незмінні ✓.<br><br>' +
     '<b>2) Множення i-го рядка на k (k ≠ 0): C = E(i · k) · A.</b><br>' +
     'У матриці E(i · k) на діагоналі в i-му рядку (на i-му місці) стоїть <b>k</b>, а в інших рядках t ≠ i на t-му місці стоїть <b>1</b>:' +
-    '<div class="code" style="white-space:pre;overflow-x:auto">      ⎛ 1  0  …  0  …  0 ⎞   ⎛ a₁₁  …  a₁ₙ ⎞   ⎛ c₁₁  …  c₁ₙ ⎞\n' +
+    '<div class="code" style="white-space:pre;overflow-x:auto;font-size:.74rem;line-height:1.35">      ⎛ 1  0  …  0  …  0 ⎞   ⎛ a₁₁  …  a₁ₙ ⎞   ⎛ c₁₁  …  c₁ₙ ⎞\n' +
     'i-й → ⎜ 0  …  0  k  …  0 ⎟ × ⎜  …  aₜₛ  …  ⎟ = ⎜  …  cₜₛ  …  ⎟\n' +
     '      ⎝ 0  0  …  0  …  1 ⎠   ⎝ aₙ₁  …  aₙₙ ⎠   ⎝ cₙ₁  …  cₙₙ ⎠\n' +
     '                 ↑ (i-те місце)\n\n' +
@@ -518,7 +518,7 @@ const AL_N3 = [
     '⇒ Елементи i-го рядка домножились на k; інші — не змінились ✓.<br><br>' +
     '<b>3) Додавання до j-го рядка i-го рядка, помноженого на k: C = E(j + i · k) · A.</b><br>' +
     'У матриці E(j + i · k) у j-му рядку на <b>i-му місці стоїть k</b>, а на <b>j-му місці стоїть 1</b>:' +
-    '<div class="code" style="white-space:pre;overflow-x:auto">      ⎛ 1  0  …  0  …  0  …  0 ⎞   ⎛ a₁₁  …  a₁ₙ ⎞   ⎛ c₁₁  …  c₁ₙ ⎞\n' +
+    '<div class="code" style="white-space:pre;overflow-x:auto;font-size:.74rem;line-height:1.35">      ⎛ 1  0  …  0  …  0  …  0 ⎞   ⎛ a₁₁  …  a₁ₙ ⎞   ⎛ c₁₁  …  c₁ₙ ⎞\n' +
     'i-й → ⎜ 0  …  0  1  …  0  …  0 ⎟   ⎜  …   …   …  ⎟   ⎜  …   …   …  ⎟\n' +
     'j-й → ⎜ 0  …  0  k  …  1  …  0 ⎟ × ⎜  …  aₜₛ  …  ⎟ = ⎜  …  cₜₛ  …  ⎟\n' +
     '      ⎝ 0  0  …  0  …  0  …  1 ⎠   ⎝ aₙ₁  …  aₙₙ ⎠   ⎝ cₙ₁  …  cₙₙ ⎠\n' +
@@ -555,7 +555,7 @@ const AL_N3 = [
     '<b>Доведення (La demostracion).</b><br>' +
     'Нехай маємо (n + 1) вектор <b>u₁, u₂, …, uₙ₊₁ ∈ V</b>.<br>' +
     'Оскільки v₁, v₂, …, vₙ — система твірних, то кожен із векторів u₁, u₂, …, uₙ₊₁ виражається через v₁, v₂, …, vₙ:' +
-    '<div class="code" style="white-space:pre;overflow-x:auto">⎧ u₁   = λ₁₁v₁   + λ₁₂v₂   + … + λ₁ₙvₙ\n' +
+    '<div class="code" style="white-space:pre;overflow-x:auto;font-size:.74rem;line-height:1.35">⎧ u₁   = λ₁₁v₁   + λ₁₂v₂   + … + λ₁ₙvₙ\n' +
     '⎪ u₂   = λ₂₁v₁   + λ₂₂v₂   + … + λ₂ₙvₙ\n' +
     '⎨ …\n' +
     '⎩ uₙ₊₁ = λₙ₊₁,₁v₁ + λₙ₊₁,₂v₂ + … + λₙ₊₁,ₙvₙ</div>' +
@@ -566,7 +566,7 @@ const AL_N3 = [
     '= α₁(λ₁₁v₁ + … + λ₁ₙvₙ) + α₂(λ₂₁v₁ + … + λ₂ₙvₙ) + … + αₙ₊₁(λₙ₊₁,₁v₁ + … + λₙ₊₁,ₙvₙ) =<br>' +
     '= <b>(α₁λ₁₁ + α₂λ₂₁ + … + αₙ₊₁λₙ₊₁,₁)v₁ + (α₁λ₁₂ + α₂λ₂₂ + … + αₙ₊₁λₙ₊₁,₂)v₂ + … + (α₁λ₁ₙ + α₂λ₂ₙ + … + αₙ₊₁λₙ₊₁,ₙ)vₙ</b>.<br><br>' +
     'Щоб у <b>(∗)</b> вийшов нульовий вектор 0̄, достатньо, щоб усі коефіцієнти біля v₁, …, vₙ дорівнювали нулю, тобто щоб однорідна СЛР:' +
-    '<div class="code" style="white-space:pre;overflow-x:auto">⎧ α₁λ₁₁ + α₂λ₂₁ + … + αₙ₊₁λₙ₊₁,₁ = 0\n' +
+    '<div class="code" style="white-space:pre;overflow-x:auto;font-size:.74rem;line-height:1.35">⎧ α₁λ₁₁ + α₂λ₂₁ + … + αₙ₊₁λₙ₊₁,₁ = 0\n' +
     '⎪ α₁λ₁₂ + α₂λ₂₂ + … + αₙ₊₁λₙ₊₁,₂ = 0\n' +
     '⎨ …\n' +
     '⎩ α₁λ₁ₙ + α₂λ₂ₙ + … + αₙ₊₁λₙ₊₁,ₙ = 0</div>' +

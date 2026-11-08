@@ -143,7 +143,7 @@
     .input-row { display: flex; gap: 9px; margin-top: 20px; }
     input[type="number"], input[type="search"] { min-width: 0; padding: 12px 14px; border: 1px solid #3d2f3b; border-radius: 12px; outline: none; background: #141016; color: var(--ink); transition: border .2s, box-shadow .2s; }
     input:focus { border-color: var(--berry); box-shadow: 0 0 0 3px rgba(240,98,146,.2); }
-    #k-val { width: 150px; }
+    #k-val, #al-k-val { width: 150px; }
     .formula-panel { padding: 26px; background: var(--butter); border-color: #463822; box-shadow: none; }
     .formula-panel h3 { color: #f3dfb6; }
     .formula-list { display: grid; gap: 10px; margin-top: 18px; }
@@ -197,13 +197,13 @@
     .example-card { padding: 25px; }
     .example-card h3 { margin: 9px 0 10px; font-family: Georgia, serif; font-size: 1.5rem; font-weight: 500; }
     .example-card p { color: #ddd0d7; font-size: .9rem; }
-    .code { display: block; margin: 12px 0; padding: 13px 15px; border-radius: 12px; background: #141016; border: 1px solid #352833; color: var(--berry-dark); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .84rem; overflow-wrap: anywhere; }
+    .code { display: block; max-width: 100%; overflow-x: auto; margin: 12px 0; padding: 13px 15px; border-radius: 12px; background: #141016; border: 1px solid #352833; color: var(--berry-dark); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .84rem; overflow-wrap: anywhere; }
     .example-card.mint { background: var(--mint); border-color: #263e32; box-shadow: none; }
     .sim-panel { padding: clamp(25px, 6vw, 50px); text-align: center; background: var(--butter); border-color: #463822; box-shadow: none; }
     .sim-panel h2 { margin: 9px 0; font-family: Georgia, serif; font-size: clamp(1.8rem, 4vw, 2.7rem); font-weight: 500; letter-spacing: -.04em; }
     .sim-panel p { max-width: 520px; margin: 0 auto 20px; color: #e5d4b3; }
     .sim-time { margin: 5px 0 20px; color: var(--berry); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: clamp(3.4rem, 10vw, 5.6rem); font-weight: 700; line-height: 1; letter-spacing: -.08em; }
-    #sim-ticket { margin-top: 16px; }
+    #sim-ticket, #al-sim-ticket { margin-top: 16px; }
     .ticket-card { padding: 22px 25px; }
     .ticket-card h3 { margin: 10px 0 5px; font-family: Georgia, serif; font-size: 1.55rem; font-weight: 500; }
 
@@ -212,21 +212,21 @@
     .ticket-solutions-header h3 { margin: 4px 0 0; font-family: Georgia, serif; font-size: 1.65rem; font-weight: 500; }
     .ticket-badges { display: flex; flex-wrap: wrap; gap: 8px; }
     .ticket-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; background: #18121a; border: 1px solid #4a2b3a; color: var(--berry-dark); font-size: .78rem; font-weight: 800; }
-    .ticket-solutions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .ticket-solution-card { padding: 24px; display: flex; flex-direction: column; gap: 10px; }
+    .ticket-solutions-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
+    .ticket-solution-card { min-width: 0; padding: 24px; display: flex; flex-direction: column; gap: 10px; }
     .ticket-solution-card.mint { background: var(--mint); border-color: #263e32; box-shadow: none; }
     .ticket-solution-card.butter { background: var(--butter); border-color: #463822; box-shadow: none; }
     .ticket-solution-meta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
     .ticket-solution-card h4 { margin: 2px 0 0; font-family: Georgia, serif; font-size: 1.35rem; font-weight: 500; color: var(--ink); }
     .ticket-solution-card p { margin: 0; color: #ddd0d7; font-size: .89rem; }
-    .proof-box { padding: 13px 15px; border-radius: 12px; background: #141016; border: 1px solid #332630; border-left: 3px solid var(--berry); color: #f3eaf0; font-size: .87rem; line-height: 1.65; }
+    .proof-box { min-width: 0; max-width: 100%; overflow-x: auto; padding: 13px 15px; border-radius: 12px; background: #141016; border: 1px solid #332630; border-left: 3px solid var(--berry); color: #f3eaf0; font-size: .87rem; line-height: 1.65; overflow-wrap: break-word; }
     .proof-box b { color: var(--berry-dark); }
     .proof-box[hidden] { display: none; }
 
     .questions-level-block { margin-bottom: 26px; }
     .questions-level-block:last-child { margin-bottom: 0; }
-    .questions-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
-    .question-item-card { padding: 22px 24px; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+    .questions-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; }
+    .question-item-card { min-width: 0; padding: 22px 24px; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
     .question-item-card.mint { background: var(--mint); border-color: #263e32; box-shadow: none; }
     .question-item-card.butter { background: var(--butter); border-color: #463822; box-shadow: none; }
     .question-item-card h4 { margin: 0; font-family: Georgia, serif; font-size: 1.3rem; font-weight: 500; line-height: 1.3; color: var(--ink); }
@@ -377,7 +377,7 @@
       .mode-button { min-height: 100px; padding: 13px 11px; }
       .top-meta { font-size: .72rem; padding: 6px 9px; }
       .input-row { align-items: stretch; flex-direction: column; }
-      #k-val { width: 100%; }
+      #k-val, #al-k-val { width: 100%; }
       .input-row .button { width: 100%; }
       .calc-panel, .formula-panel, .tasks-panel, .example-card { padding: 21px; }
       .progress-panel { padding: 20px; }
