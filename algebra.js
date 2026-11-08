@@ -187,21 +187,25 @@ function alN2Sol1(k) {
   const setDesc = n === 1
     ? 'ℤ (множина цілих чисел — містить 1/1 = 1)'
     : '{ m / ' + n + 'ˢ  |  m ∈ ℤ, s ∈ ℕ ∪ {0} } (усі дроби зі степенем ' + n + ' у знаменнику; містить 1/' + n + ' при m = 1, s = 1)';
-  return '<b>Як оформлювати на колоквіумі:</b>' +
-    '<div class="code" style="white-space:pre-wrap">k mod* 5 = ' + n + '\n' +
+  const notes = n === 1
+    ? '• <b>Замкненість додавання і множення:</b> сума й добуток двох цілих чисел m₁, m₂ ∈ ℤ знову є цілими числами, тому завжди залишаються в D = ℤ.<br>' +
+      '• Число 1/1 = 1 ∈ ℤ, нейтральні елементи 0 ∈ ℤ та 1 ∈ ℤ, протилежний −m ∈ ℤ — отже, (ℤ, +, ·) є кільцем.<br>' +
+      '• <b>Чому НЕ поле:</b> для ненульового елемента 2 ∈ ℤ оберненим за множенням мало б бути число 1/2, але 1/2 ∉ ℤ.'
+    : '• <b>Замкненість додавання і множення:</b> сума й добуток двох чисел вигляду m₁/' + n + 'ˢ¹ та m₂/' + n + 'ˢ² знову мають у знаменнику лише степінь числа ' + n + ', тому завжди залишаються в D.<br>' +
+      '• Число 1/' + n + ' ∈ D, нейтральні елементи 0 ∈ D та 1 ∈ D, протилежний −(m/' + n + 'ˢ) = (−m)/' + n + 'ˢ ∈ D — отже, (D, +, ·) є кільцем.<br>' +
+      '• <b>Чому НЕ поле:</b> для ненульового елемента ' + nonUnit + ' ∈ D оберненим за множенням мало б бути число 1/' + nonUnit + ', але воно не записується зі знаменником ' + n + 'ˢ (НСД(' + nonUnit + ', ' + n + ') = 1), тому 1/' + nonUnit + ' ∉ D.';
+  return '<b>Як оформлювати на колоквіумі (білет №' + k + '):</b>' +
+    '<div class="code" style="white-space:pre-wrap">k = ' + k + '   ⇒   ' + k + ' mod* 5 = ' + n + '   ⇒   1/(' + k + ' mod* 5) = 1/' + n + (n === 1 ? ' = 1' : '') + '\n' +
     'D = ' + setDesc + '\n' +
     'операції: звичайні додавання (+) та множення (·)\n' +
     'Ненульове число, у якого немає оберненого за другою операцією = ' + nonUnit + '  (бо 1/' + nonUnit + ' ∉ D)</div>' +
-    '<b>На що звернути увагу (замкненість обох операцій):</b><br>' +
-    '• <b>Замкненість додавання і множення:</b> сума й добуток двох чисел вигляду m₁/' + n + 'ˢ¹ та m₂/' + n + 'ˢ² знову мають у знаменнику лише степінь числа ' + n + ', тому завжди залишаються в D.<br>' +
-    '• Число 1/' + n + ' ∈ D, нейтральні елементи 0 ∈ D та 1 ∈ D, протилежний −(m/' + n + 'ˢ) = (−m)/' + n + 'ˢ ∈ D — отже, (D, +, ·) є кільцем.<br>' +
-    '• <b>Чому НЕ поле:</b> для ненульового елемента ' + nonUnit + ' ∈ D оберненим за множенням мало б бути число 1/' + nonUnit + ', але воно не записується зі знаменником ' + n + 'ˢ (НСД(' + nonUnit + ', ' + n + ') = 1), тому 1/' + nonUnit + ' ∉ D.';
+    '<b>На що звернути увагу (замкненість обох операцій):</b><br>' + notes;
 }
 
 function alN2Sol2(k) {
   const c = alMod(k, 4);
-  return '<b>Як оформлювати на колоквіумі:</b>' +
-    '<div class="code" style="white-space:pre-wrap">k mod* 4 = ' + c + '\n' +
+  return '<b>Як оформлювати на колоквіумі (білет №' + k + '):</b>' +
+    '<div class="code" style="white-space:pre-wrap">k = ' + k + '   ⇒   ' + k + ' mod* 4 = ' + c + '\n' +
     'D = { 5n  |  n ∈ ℕ ∪ {0} } = { 0, 5, 10, 15, 20, … }\n' +
     'операція: + (звичайне додавання)\n' +
     'нейтральний елемент: 0\n' +
@@ -215,8 +219,8 @@ function alN2Sol2(k) {
 function alN2Sol3(k) {
   const a = alMod(k, 10), b = alMod(k, 11);
   const lin = 2 * a, free = a * a + b * b;
-  return '<b>Як оформлювати на колоквіумі:</b>' +
-    '<div class="code" style="white-space:pre-wrap">a = k mod* 10 = ' + a + ',   b = k mod* 11 = ' + b + '\n' +
+  return '<b>Як оформлювати на колоквіумі (білет №' + k + '):</b>' +
+    '<div class="code" style="white-space:pre-wrap">k = ' + k + '   ⇒   a = ' + k + ' mod* 10 = ' + a + ',   b = ' + k + ' mod* 11 = ' + b + '\n' +
     'рівняння: x² − ' + lin + 'x + ' + free + ' = 0\n' +
     'корені: z₁ = ' + a + ' + ' + b + 'i,   z₂ = ' + a + ' − ' + b + 'i</div>' +
     '<b>Pista (як швидко отримати за теоремою Вієта):</b><br>' +
@@ -229,15 +233,15 @@ function alN2Sol3(k) {
 
 function alN2Sol4(k) {
   const n = alMod(k, 8), N = n + 1;
-  return '<b>Як оформлювати на колоквіумі (у тригонометричній формі):</b>' +
-    '<div class="code" style="white-space:pre-wrap">k mod* 8 = ' + n + '\n' +
+  return '<b>Як оформлювати на колоквіумі (білет №' + k + ', у тригонометричній формі):</b>' +
+    '<div class="code" style="white-space:pre-wrap">k = ' + k + '   ⇒   ' + k + ' mod* 8 = ' + n + '\n' +
     'z = 1 · (cos(2π/' + N + ') + i sin(2π/' + N + '))\n' +
     'z̄ = 1 · (cos(−2π/' + N + ') + i sin(−2π/' + N + '))\n' +
     'z^(' + n + ') = 1^(' + n + ') · (cos(' + (2 * n) + 'π/' + N + ') + i sin(' + (2 * n) + 'π/' + N + ')) = cos(−2π/' + N + ' + 2π) + i sin(−2π/' + N + ' + 2π) = z̄</div>' +
     '<b>Pista (як підібрати кут через формулу Муавра):</b><br>' +
     '• Беремо модуль r = 1: z = cos φ + i sin φ. Тоді спряжене в тригонометричній формі: <b>z̄ = cos(−φ) + i sin(−φ)</b>.<br>' +
     '• За <b>формулою Муавра</b>: <b>z<sup>' + n + '</sup> = cos(' + n + 'φ) + i sin(' + n + 'φ)</b>.<br>' +
-    '• Щоб z<sup>' + n + '</sup> = z̄, зробимо так, щоб аргументи в ЛЧ (' + n + 'φ) та ПЧ (−φ) відрізнялись на 2πk (візьмемо k = 1):<br>' +
+    '• Щоб z<sup>' + n + '</sup> = z̄, зробимо так, щоб аргументи в ЛЧ (' + n + 'φ) та ПЧ (−φ) відрізнялись на 2πm (візьмемо m = 1):<br>' +
     '<b>' + n + 'φ − (−φ) = 2π &nbsp;⇒&nbsp; ' + N + 'φ = 2π &nbsp;⇒&nbsp; φ = 2π/' + N + '</b>.<br>' +
     '<i>(Також тривіально підходять φ = 0, тобто z = 1(cos 0 + i sin 0), або z = 0.)</i>';
 }
@@ -257,11 +261,11 @@ function alN2Sol5(k) {
   const sys = col => '⎧ ' + eq(rows[0], col[0]) + '\n⎨ ' + eq(rows[1], col[1]) + '\n⎩ ' + eq(rows[2], col[2]);
   const ycoef = '(' + alNum(y[0]) + ')·Р₁ + (' + alNum(y[1]) + ')·Р₂ + (' + alNum(y[2]) + ')·Р₃';
   const lhsC = y[0] * c[0] + y[1] * c[1] + y[2] * c[2];
-  return '<b>Як оформлювати на колоквіумі (просто записати обидві СЛР і вказати розв’язок першої):</b>' +
-    '<div class="code" style="white-space:pre-wrap">k mod* 2 = ' + p + ',   k mod* 3 = ' + q + '\n\n' +
-    '1) СЛР зі стовпчиком (' + b.join(', ') + ') — МАЄ розв’язок:\n' + sys(b) + '\n' +
+  return '<b>Як оформлювати на колоквіумі (білет №' + k + ' — просто записати обидві СЛР і вказати розв’язок першої):</b>' +
+    '<div class="code" style="white-space:pre-wrap">k = ' + k + '   ⇒   ' + k + ' mod* 2 = ' + p + ',   ' + k + ' mod* 3 = ' + q + '\n\n' +
+    '1) СЛР зі стовпчиком ((' + k + ' mod* 2)+1, ' + k + ' mod* 2, (' + k + ' mod* 2)−1) = (' + b.join(', ') + ') — МАЄ розв’язок:\n' + sys(b) + '\n' +
     'Розв’язок: (x, y, z) = (' + sol.join(', ') + ')\n\n' +
-    '2) СЛР зі стовпчиком (' + c.join(', ') + ') — НЕ має розв’язку:\n' + sys(c) + '</div>' +
+    '2) СЛР зі стовпчиком ((' + k + ' mod* 3)−1, ' + k + ' mod* 3, (' + k + ' mod* 3)+1) = (' + c.join(', ') + ') — НЕ має розв’язку:\n' + sys(c) + '</div>' +
     '<b>Чому це працює (самоперевірка, на чистовик можна не писати):</b><br>' +
     '• Жодні два рівняння не пропорційні (у 2-му немає y, у 3-му немає x, а в 1-му є всі три змінні).<br>' +
     '• Лінійна комбінація лівих частин ' + ycoef + ' тотожно дорівнює 0. Для першого стовпчика вільних членів (' + b.join(', ') + ') ця комбінація дає 0 = 0 (і підстановка (' + sol.join(', ') + ') задовольняє всі три рівняння), а для другого стовпчика (' + c.join(', ') + ') дає 0 = ' + alNum(lhsC) + ' ≠ 0 — суперечність.';
@@ -271,8 +275,8 @@ function alN2Sol6(k) {
   const a = alMod(k, 5), b = alMod(k, 6), c = alMod(k, 7);
   const A = [[a, b, c], [0, 1, 0], [0, 0, 1]];
   const Ai = [[alFrac(1, a), alFrac(-b, a), alFrac(-c, a)], [alFrac(0), alFrac(1), alFrac(0)], [alFrac(0), alFrac(0), alFrac(1)]];
-  return '<b>Як оформлювати на колоквіумі (просто вказати обидві матриці):</b>' +
-    '<div class="code" style="white-space:pre-wrap">k mod* 5 = ' + a + ',   k mod* 6 = ' + b + ',   k mod* 7 = ' + c + '\n' +
+  return '<b>Як оформлювати на колоквіумі (білет №' + k + ' — просто вказати обидві матриці):</b>' +
+    '<div class="code" style="white-space:pre-wrap">k = ' + k + '   ⇒   ' + k + ' mod* 5 = ' + a + ',   ' + k + ' mod* 6 = ' + b + ',   ' + k + ' mod* 7 = ' + c + '\n' +
     'Рядок за умовою: (' + a + ', ' + b + ', ' + c + ')</div>' +
     '<b>Матриця A:</b>' + alMatBlock(A) +
     '<b>Обернена матриця A⁻¹:</b>' + alMatBlock(Ai, alFs) +
@@ -296,8 +300,8 @@ function alN2Sol7(k) {
   for (let i = 0; i < N; i++) prod = alMatMul(used[i].m, prod);
   const lhsOrder = used.map((_, i) => 'E' + (N - i)).join(' · ');
   const eBlocks = used.map((u, i) => '<b>E' + (i + 1) + ' = ' + u.name + '</b> (' + u.d + '):' + alMatBlock(u.m)).join('');
-  return '<b>Як оформлювати на колоквіумі:</b>' +
-    '<div class="code" style="white-space:pre-wrap">k mod* 4 = ' + m + '   ⇒   кількість елементарних матриць: (k mod* 4) + 2 = ' + N + '</div>' +
+  return '<b>Як оформлювати на колоквіумі (білет №' + k + '):</b>' +
+    '<div class="code" style="white-space:pre-wrap">k = ' + k + '   ⇒   ' + k + ' mod* 4 = ' + m + '   ⇒   кількість елементарних матриць: (' + k + ' mod* 4) + 2 = ' + m + ' + 2 = ' + N + '</div>' +
     '<b>Матриця A:</b>' + alMatBlock(prod) +
     '<b>Елементарні матриці E₁, E₂, …, E' + N + ' (є всі три типи, немає взаємно обернених):</b><br>' +
     eBlocks +
@@ -308,7 +312,7 @@ function alN2Sol7(k) {
 }
 
 function alN2Sol8(k) {
-  const t = alMod(k, 3), s = alMod(k, 2) + 1, target = alMod(k, 8);
+  const m2 = alMod(k, 2), t = alMod(k, 3), s = m2 + 1, target = alMod(k, 8);
   const A = [[1, 2], [3, 4], [5, 6]], B = [[1, 2], [3, 4]];
   const AB = alMatMul(A, B);
   const r = AB[t - 1];
@@ -331,8 +335,8 @@ function alN2Sol8(k) {
   const c1s = C[0][s - 1], c2s = C[1][s - 1];
   const p1 = a_t1 * b11 * c1s, p2 = a_t2 * b21 * c1s, p3 = a_t1 * b12 * c2s, p4 = a_t2 * b22 * c2s;
 
-  return '<b>Як оформлювати на колоквіумі:</b>' +
-    '<div class="code" style="white-space:pre-wrap">t = k mod* 3 = ' + t + ',   s = (k mod* 2) + 1 = ' + s + ',   k mod* 8 = ' + target + '</div>' +
+  return '<b>Як оформлювати на колоквіумі (білет №' + k + '):</b>' +
+    '<div class="code" style="white-space:pre-wrap">k = ' + k + '   ⇒   t = ' + k + ' mod* 3 = ' + t + ',   s = (' + k + ' mod* 2) + 1 = ' + m2 + ' + 1 = ' + s + ',   ' + k + ' mod* 8 = ' + target + '</div>' +
     '<b>Матриці A (3 × 2), B (2 × 2), C (2 × 3)</b> (у кожній усі елементи ненульові й попарно різні):' +
     alMatBlock(A) + alMatBlock(B) + alMatBlock(C) +
     '<b>Обчислення елемента (ABC)<sub>' + t + ',' + s + '</sub> через індекси, а потім підстановка чисел:</b>' +
@@ -351,8 +355,8 @@ function alN2Sol9(k) {
   const chain = s === 2
     ? '1·v₁ + 1·v₂ = 1·v₃ = (1, 1)'
     : '1·v₁ + 1·v₂ + 0·v₃ + 0·v₄ = 0·v₁ + 0·v₂ + 1·v₃ + 0·v₄ = 0·v₁ − 1·v₂ + 0·v₃ + 1·v₄ = (1, 1)';
-  return '<b>Як оформлювати на колоквіумі:</b>' +
-    '<div class="code" style="white-space:pre-wrap">k mod* 2 = ' + p + '   ⇒   кількість векторів: ' + m + ',   кількість комбінацій: ' + s + '\n' +
+  return '<b>Як оформлювати на колоквіумі (білет №' + k + '):</b>' +
+    '<div class="code" style="white-space:pre-wrap">k = ' + k + '   ⇒   ' + k + ' mod* 2 = ' + p + '   ⇒   кількість векторів: (' + k + ' mod* 2) + 2 = ' + p + ' + 2 = ' + m + ',   кількість комбінацій: (' + k + ' mod* 2) + 1 = ' + p + ' + 1 = ' + s + '\n' +
     vs.map((v, i) => 'v' + (i + 1) + ' = ' + vecStr(v)).join('\n') + '\n\n' +
     'Рівні лінійні комбінації:\n' + chain + '</div>' +
     '<b>Перевірка умов:</b><br>' +
@@ -361,15 +365,27 @@ function alN2Sol9(k) {
 }
 
 const AL_N2 = [
-  [1, 'Кільце, яке містить число 1/(k mod* 5), але НЕ є полем', alN2Sol1],
-  [2, 'Моноїд, але НЕ група, який містить нескінченну кількість елементів, але НЕ містить число (k mod* 4)', alN2Sol2],
-  [3, 'Квадратне рівняння з дійсними коефіцієнтами, що число z = a + bi буде його коренем, де a = k mod* 10, b = k mod* 11', alN2Sol3],
-  [4, 'Комплексне число z, що z^(k mod* 8) = z̄', alN2Sol4],
-  [5, 'СЛР 3 × 3, рівняння якої НЕ пропорційні: з вільними членами ((k mod* 2)+1, k mod* 2, (k mod* 2)−1) вона має розв’язок, а з ((k mod* 3)−1, k mod* 3, (k mod* 3)+1) — ні', alN2Sol5],
-  [6, 'Матриця та обернена до неї такі, що в якійсь із них є рядок (k mod* 5, k mod* 6, k mod* 7)', alN2Sol6],
-  [7, 'Матриця 3 × 3, яка розкладається в добуток рівно ((k mod* 4) + 2) елементарних матриць, серед яких є всіх трьох типів і немає обернених', alN2Sol7],
-  [8, 'Матриці A (3 × 2), B (2 × 2), C (2 × 3): без нульових елементів, у кожній усі елементи різні; у ABC елемент у комірці (k mod* 3, (k mod* 2)+1) дорівнює k mod* 8', alN2Sol8],
-  [9, '(k mod* 2) + 2 векторів у ℝ², серед яких немає колінеарних, та (k mod* 2) + 1 їхніх різних лінійних комбінацій, які дають однаковий результат', alN2Sol9]
+  [1, 'Кільце, яке містить число 1/(k mod* 5), але НЕ є полем', alN2Sol1,
+    k => 'Кільце, яке містить число 1/(' + k + ' mod* 5) = 1/' + alMod(k, 5) + ', але НЕ є полем'],
+  [2, 'Моноїд, але НЕ група, який містить нескінченну кількість елементів, але НЕ містить число (k mod* 4)', alN2Sol2,
+    k => 'Моноїд, але НЕ група, який містить нескінченну кількість елементів, але НЕ містить число (' + k + ' mod* 4) = ' + alMod(k, 4)],
+  [3, 'Квадратне рівняння з дійсними коефіцієнтами, що число z = a + bi буде його коренем, де a = k mod* 10, b = k mod* 11', alN2Sol3,
+    k => 'Квадратне рівняння з дійсними коефіцієнтами, що число z = ' + alMod(k, 10) + ' + ' + alMod(k, 11) + 'i буде його коренем (a = ' + k + ' mod* 10 = ' + alMod(k, 10) + ', b = ' + k + ' mod* 11 = ' + alMod(k, 11) + ')'],
+  [4, 'Комплексне число z, що z^(k mod* 8) = z̄', alN2Sol4,
+    k => 'Комплексне число z, що z^(' + k + ' mod* 8) = z^' + alMod(k, 8) + ' = z̄'],
+  [5, 'СЛР 3 × 3, рівняння якої НЕ пропорційні: з вільними членами ((k mod* 2)+1, k mod* 2, (k mod* 2)−1) вона має розв’язок, а з ((k mod* 3)−1, k mod* 3, (k mod* 3)+1) — ні', alN2Sol5,
+    k => {
+      const p = alMod(k, 2), q = alMod(k, 3);
+      return 'СЛР 3 × 3, рівняння якої НЕ пропорційні: з вільними членами (' + (p + 1) + ', ' + p + ', ' + (p - 1) + ') вона має розв’язок, а з (' + (q - 1) + ', ' + q + ', ' + (q + 1) + ') — ні';
+    }],
+  [6, 'Матриця та обернена до неї такі, що в якійсь із них є рядок (k mod* 5, k mod* 6, k mod* 7)', alN2Sol6,
+    k => 'Матриця та обернена до неї такі, що в якійсь із них є рядок (' + k + ' mod* 5, ' + k + ' mod* 6, ' + k + ' mod* 7) = (' + alMod(k, 5) + ', ' + alMod(k, 6) + ', ' + alMod(k, 7) + ')'],
+  [7, 'Матриця 3 × 3, яка розкладається в добуток рівно ((k mod* 4) + 2) елементарних матриць, серед яких є всіх трьох типів і немає обернених', alN2Sol7,
+    k => 'Матриця 3 × 3, яка розкладається в добуток рівно ((' + k + ' mod* 4) + 2) = ' + (alMod(k, 4) + 2) + ' елементарних матриць, серед яких є всіх трьох типів і немає обернених'],
+  [8, 'Матриці A (3 × 2), B (2 × 2), C (2 × 3): без нульових елементів, у кожній усі елементи різні; у ABC елемент у комірці (k mod* 3, (k mod* 2)+1) дорівнює k mod* 8', alN2Sol8,
+    k => 'Матриці A (3 × 2), B (2 × 2), C (2 × 3): без нульових елементів, у кожній усі елементи різні; у ABC елемент у комірці (' + alMod(k, 3) + ', ' + (alMod(k, 2) + 1) + ') дорівнює ' + k + ' mod* 8 = ' + alMod(k, 8)],
+  [9, '(k mod* 2) + 2 векторів у ℝ², серед яких немає колінеарних, та (k mod* 2) + 1 їхніх різних лінійних комбінацій, які дають однаковий результат', alN2Sol9,
+    k => '(' + k + ' mod* 2) + 2 = ' + (alMod(k, 2) + 2) + ' векторів у ℝ², серед яких немає колінеарних, та (' + k + ' mod* 2) + 1 = ' + (alMod(k, 2) + 1) + ' їхніх різних лінійних комбінацій, які дають однаковий результат']
 ];
 
 /* ======================================================================
@@ -645,11 +661,12 @@ const AL_N4 = [
    ====================================================================== */
 const AL = [];
 AL_N1.forEach((q, i) => AL.push({ nivel: 1, num: i + 1, title: q[1], body: q[2] }));
-AL_N2.forEach(q => AL.push({ nivel: 2, num: q[0], title: q[1], body: q[2], dynamic: true }));
+AL_N2.forEach(q => AL.push({ nivel: 2, num: q[0], title: q[1], body: q[2], titleFn: q[3], dynamic: true }));
 AL_N3.forEach(q => AL.push({ nivel: 3, num: q[0], title: q[1], body: q[2] }));
 AL_N4.forEach(q => AL.push({ nivel: 4, num: q[0], title: q[1], body: q[2] }));
 
 function alFind(nivel, num) { return AL.find(q => q.nivel === nivel && q.num === num); }
+function alTitle(q, k) { return q.titleFn ? q.titleFn(k) : q.title; }
 function alBody(q, k) { return q.dynamic ? q.body(k) : q.body; }
 
 /* ======================================================================
@@ -680,7 +697,7 @@ function alBuildTicketHTML(k) {
     return '<article class="panel ticket-solution-card ' + styleClass + '">' +
       '<div class="ticket-solution-meta"><span class="tag">Білет №' + k + ' · Nivel ' + slot.nivel + ' · Питання №' + slot.qNum + '</span>' +
       '<span class="mini-label">' + slot.formula + '</span></div>' +
-      '<h4>' + item.title + '</h4>' +
+      '<h4>' + alTitle(item, k) + '</h4>' +
       '<div class="proof-box"><b>' + alBoxLabel(slot.nivel) + '</b><br>' + alBody(item, k) + '</div>' +
       '</article>';
   }).join('');
@@ -694,7 +711,7 @@ function alBuildTicketHTML(k) {
     '<div class="ticket-solutions-grid">' + cards + '</div>';
 }
 
-function alCalcK() {
+function alCalcK(skipFocus) {
   const field = document.getElementById('al-k-val');
   const k = Number(field.value);
   const result = document.getElementById('al-k-res');
@@ -702,17 +719,26 @@ function alCalcK() {
   if (!Number.isInteger(k) || k < 1 || k > 100) {
     result.innerHTML = '<p class="helper" style="color:var(--berry);margin-top:12px">Введи ціле число від 1 до 100.</p>';
     if (block) block.innerHTML = '';
-    field.focus();
+    if (!skipFocus) field.focus();
     return;
   }
   const q = alSlots(k).map(s => s.qNum);
   result.innerHTML = '<div class="result-wrap"><table><thead><tr><th>Білет</th><th>Рівень</th><th>Формула</th><th>Питання</th></tr></thead><tbody>' +
-    '<tr><td><b>№' + k + '</b></td><td>Nivel 1</td><td>k mod* 23 / (k+12) mod* 23</td><td><b>№' + q[0] + '</b>, <b>№' + q[1] + '</b></td></tr>' +
-    '<tr><td><b>№' + k + '</b></td><td>Nivel 2</td><td>k mod* 9 / (k+5) mod* 9</td><td><b>№' + q[2] + '</b>, <b>№' + q[3] + '</b></td></tr>' +
-    '<tr><td><b>№' + k + '</b></td><td>Nivel 3</td><td>k mod* 7</td><td><b>№' + q[4] + '</b></td></tr>' +
-    '<tr><td><b>№' + k + '</b></td><td>Nivel 4</td><td>k mod* 4</td><td><b>№' + q[5] + '</b></td></tr>' +
+    '<tr><td><b>№' + k + '</b></td><td>Nivel 1</td><td>' + k + ' mod* 23 = ' + q[0] + ' / (' + k + '+12) mod* 23 = ' + q[1] + '</td><td><b>№' + q[0] + '</b>, <b>№' + q[1] + '</b></td></tr>' +
+    '<tr><td><b>№' + k + '</b></td><td>Nivel 2</td><td>' + k + ' mod* 9 = ' + q[2] + ' / (' + k + '+5) mod* 9 = ' + q[3] + '</td><td><b>№' + q[2] + '</b>, <b>№' + q[3] + '</b></td></tr>' +
+    '<tr><td><b>№' + k + '</b></td><td>Nivel 3</td><td>' + k + ' mod* 7 = ' + q[4] + '</td><td><b>№' + q[4] + '</b></td></tr>' +
+    '<tr><td><b>№' + k + '</b></td><td>Nivel 4</td><td>' + k + ' mod* 4 = ' + q[5] + '</td><td><b>№' + q[5] + '</b></td></tr>' +
     '</tbody></table></div>';
   if (block) block.innerHTML = alBuildTicketHTML(k);
+  document.querySelectorAll('#al-questions-container .question-proof-content[data-dynamic="1"]').forEach(box => {
+    if (!box.hidden) {
+      const card = box.closest('.question-item-card');
+      const item = alFind(Number(card.getAttribute('data-nivel')), Number(card.getAttribute('data-num')));
+      if (item) {
+        box.innerHTML = '<i>Розв’язок для k = ' + k + ' (значення береться з поля «Розрахуй варіант k» на сторінці білета).</i><br><br>' + alBody(item, k);
+      }
+    }
+  });
 }
 
 /* навігація */
@@ -792,7 +818,7 @@ function alStartSim() {
     const slots = alSlots(k);
     const items = slots.map(s => {
       const item = alFind(s.nivel, s.qNum);
-      return '<li style="margin-bottom:10px"><span class="tag">Nivel ' + s.nivel + ' · №' + s.qNum + '</span> <b>' + item.title + '</b>' +
+      return '<li style="margin-bottom:10px"><span class="tag">Nivel ' + s.nivel + ' · №' + s.qNum + '</span> <b>' + alTitle(item, k) + '</b>' +
         '<details style="margin-top:6px"><summary>Показати ' + (s.nivel === 1 ? 'означення' : s.nivel === 2 ? 'розв’язок' : 'доведення') + '</summary>' +
         '<div class="proof-box" style="margin-top:8px">' + alBody(item, k) + '</div></details></li>';
     }).join('');

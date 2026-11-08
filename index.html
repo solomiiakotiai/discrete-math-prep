@@ -656,7 +656,7 @@
             <h3>Розрахуй варіант k</h3>
             <p class="helper">Номер варіанта — ціле число від 1 до 100.</p>
             <div class="input-row">
-              <input type="number" id="al-k-val" min="1" max="100" value="1" aria-label="Номер варіанта k" onkeydown="if(event.key==='Enter'){event.preventDefault();alCalcK();}">
+              <input type="number" id="al-k-val" min="1" max="100" value="1" aria-label="Номер варіанта k" oninput="if(this.value!=='')alCalcK(true)" onchange="alCalcK(true)" onkeydown="if(event.key==='Enter'){event.preventDefault();alCalcK();}">
               <button class="button primary" onclick="alCalcK()">Показати білет <span aria-hidden="true">→</span></button>
             </div>
             <div id="al-k-res" aria-live="polite"></div>
