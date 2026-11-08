@@ -1875,15 +1875,85 @@
         "3) Підставляючи знайдені коефіцієнти c<sub>k</sub> у рівність (∗), одержуємо формулу Тейлора ∎"]
     ];
 
+    const calculusSearchAliases = {
+      4: 'сюрєкція інєкція',
+      9: 'інфімум sup inf',
+      12: 'кантора',
+      20: 'дві',
+      25: 'границя функції',
+      26: 'границя функції',
+      28: '1 2',
+      31: 'вейєрштрасса веєрштрасса',
+      32: 'больцано',
+      33: 'вейєрштрасса веєрштрасса',
+      35: 'похідної фізичний',
+      37: 'звязок диференційовністю',
+      41: 'ролля',
+      43: 'порядків',
+      44: 'маклорена'
+    };
+
+    const ukSearchSuffixes = [
+      'остями', 'остях', 'істю', 'ості', 'ість',
+      'ованістю', 'ованість', 'овності', 'овність',
+      'ання', 'ення', 'іння', 'ття',
+      'ями', 'ами', 'ові', 'еві', 'ої', 'ій', 'ою', 'єю', 'их', 'їх', 'им', 'ім', 'ого', 'ому',
+      'ів', 'їв', 'ей', 'ам', 'ям', 'ах', 'ях',
+      'а', 'я', 'и', 'і', 'у', 'ю', 'е', 'о'
+    ];
+
+    function normCalculusSearch(str) {
+      return str
+        .toLocaleLowerCase('uk')
+        .replace(/<[^>]+>/g, ' ')
+        .replace(/['’ʼ`]/g, '')
+        .replace(/["«»()?:;,.•/\\—–\-]+/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+
+    function stemCalculusWord(word) {
+      if (word.length <= 3) return word;
+      for (const suf of ukSearchSuffixes) {
+        if (word.endsWith(suf) && word.length - suf.length >= 3) {
+          return word.slice(0, word.length - suf.length);
+        }
+      }
+      return word;
+    }
+
+    function matchesCalculusQuestion(item, tokens) {
+      if (!tokens.length) return true;
+      const num = item[0];
+      if (tokens.length === 1 && /^№?\d+$/.test(tokens[0])) {
+        return num === Number(tokens[0].replace(/^№/, ''));
+      }
+      const haystack = normCalculusSearch(`${item[1]} ${calculusSearchAliases[num] || ''}`);
+      const hayWords = haystack.split(' ').filter(Boolean);
+      const hayStems = hayWords.map(stemCalculusWord);
+      return tokens.every(t => {
+        if (/^№?\d+$/.test(t)) {
+          const nVal = t.replace(/^№/, '');
+          return String(num) === nVal || hayWords.includes(nVal);
+        }
+        const tStem = stemCalculusWord(t);
+        return hayWords.some((hw, idx) => {
+          const hs = hayStems[idx];
+          if (hw === t) return true;
+          if (hs.length < 3) return false;
+          return hw.startsWith(t) || hw.startsWith(tStem) || hs.startsWith(tStem) || (tStem.length >= 4 && tStem.startsWith(hs));
+        });
+      });
+    }
+
     function renderCalculusQuestions(query = '') {
       const container = document.getElementById('ma-questions-list-container');
       const counter = document.getElementById('ma-question-counter');
       const badge = document.getElementById('ma-question-badge');
       if (!container) return;
-      const q = query.trim().toLocaleLowerCase('uk');
-      const filtered = calculusQuestions.filter(item =>
-        `${item[0]} ${item[1].replace(/<br>/g, ' ')} ${(item[2] || '').replace(/<[^>]+>/g, ' ')}`.toLocaleLowerCase('uk').includes(q)
-      );
+      const qNorm = normCalculusSearch(query);
+      const tokens = qNorm ? qNorm.split(' ') : [];
+      const filtered = calculusQuestions.filter(item => matchesCalculusQuestion(item, tokens));
       if (counter) counter.textContent = `${filtered.length} / ${calculusQuestions.length} питань`;
       if (badge) badge.textContent = `Питань: ${filtered.length}`;
       if (!filtered.length) {
