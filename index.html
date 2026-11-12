@@ -37,16 +37,23 @@
     button { cursor: pointer; }
 
     .app-shell {
+      position: relative;
       display: grid;
       grid-template-columns: 280px minmax(0, 1fr);
       min-height: 100vh;
       align-items: start;
+      transition: grid-template-columns .28s cubic-bezier(.4, 0, .2, 1);
+    }
+    .app-shell.sidebar-collapsed {
+      grid-template-columns: 0px minmax(0, 1fr);
     }
     .sidebar {
       position: sticky;
       top: 0;
       height: 100vh;
+      min-width: 0;
       overflow-y: auto;
+      overflow-x: hidden;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -55,11 +62,118 @@
       background: rgba(22, 17, 24, .92);
       border-right: 1px solid var(--line);
       backdrop-filter: blur(14px);
+      visibility: visible;
+      transition:
+        transform .28s cubic-bezier(.4, 0, .2, 1),
+        opacity .22s ease,
+        padding .28s cubic-bezier(.4, 0, .2, 1),
+        border-color .28s ease,
+        max-height .28s cubic-bezier(.4, 0, .2, 1),
+        visibility 0s linear 0s;
+    }
+    .app-shell.sidebar-collapsed .sidebar {
+      opacity: 0;
+      pointer-events: none;
+      visibility: hidden;
+      border-color: transparent;
+      transition:
+        transform .28s cubic-bezier(.4, 0, .2, 1),
+        opacity .2s ease,
+        padding .28s cubic-bezier(.4, 0, .2, 1),
+        border-color .28s ease,
+        max-height .28s cubic-bezier(.4, 0, .2, 1),
+        visibility 0s linear .28s;
+    }
+    @media (min-width: 881px) {
+      .sidebar-top,
+      .sidebar-card {
+        min-width: 244px;
+      }
+      .app-shell.sidebar-collapsed .sidebar {
+        padding-left: 0;
+        padding-right: 0;
+        transform: translateX(-28px);
+      }
     }
     .sidebar-top { display: flex; flex-direction: column; gap: 18px; }
-    .brand { display: inline-flex; align-items: center; gap: 11px; padding: 4px 6px; color: var(--ink); text-decoration: none; font-size: .95rem; font-weight: 800; letter-spacing: -.03em; }
-    .brand-mark { display: grid; place-items: center; flex: 0 0 38px; width: 38px; height: 38px; border-radius: 13px; color: white; background: var(--berry-btn); font-family: Georgia, serif; font-size: 1.2rem; transform: rotate(-5deg); }
-    .brand small { display: block; color: var(--muted); font-size: .66rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; }
+    .sidebar-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .brand { display: inline-flex; align-items: center; gap: 9px; min-width: 0; padding: 4px 2px; color: var(--ink); text-decoration: none; font-size: .9rem; font-weight: 800; letter-spacing: -.03em; }
+    .brand-mark { display: grid; place-items: center; flex: 0 0 36px; width: 36px; height: 36px; border-radius: 12px; color: white; background: var(--berry-btn); font-family: Georgia, serif; font-size: 1.15rem; transform: rotate(-5deg); }
+    .brand small { display: block; color: var(--muted); font-size: .64rem; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; }
+    .sidebar-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 36px;
+      width: 36px;
+      height: 36px;
+      padding: 0;
+      border: 1px solid #452635;
+      border-radius: 11px;
+      background: var(--pink-light);
+      color: var(--berry-dark);
+      transition: transform .2s, background .2s, border-color .2s, color .2s;
+    }
+    .sidebar-toggle-btn:hover {
+      transform: translateX(-2px);
+      background: var(--pink);
+      border-color: var(--berry);
+      color: #fff;
+    }
+    .sidebar-open-btn {
+      position: fixed;
+      top: 14px;
+      left: 16px;
+      z-index: 35;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      height: 38px;
+      padding: 0 13px;
+      border: 1px solid #522c3e;
+      border-radius: 12px;
+      background: rgba(38, 23, 32, .92);
+      backdrop-filter: blur(12px);
+      color: var(--berry-dark);
+      font-size: .82rem;
+      font-weight: 750;
+      box-shadow: 0 8px 22px rgba(0, 0, 0, .38);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transform: translateX(-10px);
+      transition:
+        opacity .22s ease,
+        transform .24s cubic-bezier(.4, 0, .2, 1),
+        background .2s ease,
+        border-color .2s ease,
+        color .2s ease,
+        visibility 0s linear .24s;
+    }
+    .sidebar-open-btn:hover {
+      background: var(--berry-btn);
+      border-color: var(--berry);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+    .app-shell.sidebar-collapsed .sidebar-open-btn {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: translateX(0);
+      transition:
+        opacity .24s ease .04s,
+        transform .24s cubic-bezier(.4, 0, .2, 1) .04s,
+        background .2s ease,
+        border-color .2s ease,
+        color .2s ease,
+        visibility 0s linear 0s;
+    }
     .top-meta { display: inline-flex; align-items: center; gap: 9px; padding: 8px 12px; border-radius: 12px; background: var(--paper); border: 1px solid var(--line); color: var(--muted); font-size: .78rem; font-weight: 700; }
     .live-dot { width: 8px; height: 8px; border-radius: 50%; background: #f06292; box-shadow: 0 0 0 4px rgba(240,98,146,.2); }
 
@@ -118,9 +232,19 @@
     .sidebar-card p { margin: 0; color: var(--muted); font-size: .78rem; line-height: 1.45; }
 
     main {
-      width: min(1080px, 100%);
+      width: 100%;
+      max-width: 1080px;
       margin: 0 auto;
       padding: 28px 34px 64px;
+      transition: max-width .28s cubic-bezier(.4, 0, .2, 1), padding .28s cubic-bezier(.4, 0, .2, 1);
+    }
+    .app-shell.sidebar-collapsed main {
+      max-width: 100vw;
+      padding-top: 66px;
+    }
+    .app-shell.sidebar-collapsed .flashcard .q,
+    .app-shell.sidebar-collapsed .flashcard .a {
+      max-width: 100%;
     }
     .eyebrow { display: inline-flex; align-items: center; gap: 9px; color: var(--berry); font-size: .75rem; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
     .eyebrow::before { content: ""; width: 22px; height: 1px; background: currentColor; }
@@ -346,16 +470,24 @@
     @media (max-width: 880px) {
       .landing-buttons { grid-template-columns: 1fr; }
       .landing-subject-btn { min-height: 68px; }
-      .app-shell { grid-template-columns: 1fr; }
+      .app-shell, .app-shell.sidebar-collapsed { grid-template-columns: 1fr; }
       .sidebar {
         position: sticky;
         top: 0;
         z-index: 20;
         height: auto;
+        max-height: 260px;
         padding: 12px 16px;
         border-right: 0;
         border-bottom: 1px solid var(--line);
         gap: 10px;
+      }
+      .app-shell.sidebar-collapsed .sidebar {
+        max-height: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+        border-bottom-width: 0;
+        transform: translateY(-12px);
       }
       .sidebar-top { gap: 10px; }
       .sidebar-header-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
@@ -363,7 +495,9 @@
       .tabs { flex-direction: row; overflow-x: auto; gap: 6px; padding-bottom: 2px; scrollbar-width: thin; }
       .tabs button { width: auto; flex: 0 0 auto; padding: 8px 12px; font-size: .82rem; }
       .tabs button small { display: none; }
-      main { width: min(100% - 28px, 680px); padding: 20px 0 48px; }
+      main { width: 100%; max-width: 680px; padding: 20px 14px 48px; }
+      .app-shell.sidebar-collapsed main { max-width: 100vw; padding-top: 62px; }
+      .sidebar-open-btn { top: 12px; left: 14px; }
       .calc-grid, .plan-layout, .examples-grid, .ticket-solutions-grid { grid-template-columns: 1fr; }
       .study-modes { grid-template-columns: repeat(2, 1fr); }
       .timer-panel { position: static; }
@@ -421,6 +555,13 @@
             <span class="brand-mark">∑</span>
             <span>Математика без паніки<small>Твій простір підготовки</small></span>
           </a>
+          <button type="button" class="sidebar-toggle-btn" onclick="toggleSidebar(true)" aria-label="Сховати бокову панель" title="Сховати бокову панель" aria-expanded="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3" y="3" width="18" height="18" rx="4"></rect>
+              <line x1="9" y1="3" x2="9" y2="21"></line>
+              <polyline points="15 9 12 12 15 15"></polyline>
+            </svg>
+          </button>
         </div>
         <div class="top-meta"><span class="live-dot"></span><span>Колоквіум · Nivel 1–4</span></div>
         <div class="sidebar-label">Головна сторінка</div>
@@ -444,6 +585,14 @@
     </aside>
 
     <main id="top">
+      <button type="button" class="sidebar-open-btn" onclick="toggleSidebar(false)" aria-label="Відкрити бокову панель" title="Відкрити бокову панель" aria-expanded="false" tabindex="-1">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="3" width="18" height="18" rx="4"></rect>
+          <line x1="9" y1="3" x2="9" y2="21"></line>
+          <polyline points="13 9 16 12 13 15"></polyline>
+        </svg>
+        <span>Панель</span>
+      </button>
       <section id="sec-calc">
         <div class="section-heading">
           <div><span class="eyebrow">Головна · Розрахунок білета та доведення</span><h2>Твій білет, питання Nivel 1–4 та розв’язки</h2></div>
@@ -576,6 +725,13 @@
             <span class="brand-mark">∑</span>
             <span>Математика без паніки<small>Твій простір підготовки</small></span>
           </a>
+          <button type="button" class="sidebar-toggle-btn" onclick="toggleSidebar(true)" aria-label="Сховати бокову панель" title="Сховати бокову панель" aria-expanded="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3" y="3" width="18" height="18" rx="4"></rect>
+              <line x1="9" y1="3" x2="9" y2="21"></line>
+              <polyline points="15 9 12 12 15 15"></polyline>
+            </svg>
+          </button>
         </div>
         <div class="top-meta"><span class="live-dot"></span><span>Математичний аналіз · Колоквіум</span></div>
         <div class="sidebar-label">Навігація</div>
@@ -592,6 +748,14 @@
     </aside>
 
     <main id="ma-top">
+      <button type="button" class="sidebar-open-btn" onclick="toggleSidebar(false)" aria-label="Відкрити бокову панель" title="Відкрити бокову панель" aria-expanded="false" tabindex="-1">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="3" width="18" height="18" rx="4"></rect>
+          <line x1="9" y1="3" x2="9" y2="21"></line>
+          <polyline points="13 9 16 12 13 15"></polyline>
+        </svg>
+        <span>Панель</span>
+      </button>
       <section id="sec-ma-questions">
         <div class="section-heading">
           <div><span class="eyebrow">Математичний аналіз · Питання до колоквіуму</span><h2>Список питань</h2></div>
@@ -626,6 +790,13 @@
             <span class="brand-mark">∑</span>
             <span>Математика без паніки<small>Твій простір підготовки</small></span>
           </a>
+          <button type="button" class="sidebar-toggle-btn" onclick="toggleSidebar(true)" aria-label="Сховати бокову панель" title="Сховати бокову панель" aria-expanded="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3" y="3" width="18" height="18" rx="4"></rect>
+              <line x1="9" y1="3" x2="9" y2="21"></line>
+              <polyline points="15 9 12 12 15 15"></polyline>
+            </svg>
+          </button>
         </div>
         <div class="top-meta"><span class="live-dot"></span><span>Алгебра та геометрія · Nivel 1–4</span></div>
         <div class="sidebar-label">Головна сторінка</div>
@@ -645,6 +816,14 @@
     </aside>
 
     <main id="al-top">
+      <button type="button" class="sidebar-open-btn" onclick="toggleSidebar(false)" aria-label="Відкрити бокову панель" title="Відкрити бокову панель" aria-expanded="false" tabindex="-1">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="3" width="18" height="18" rx="4"></rect>
+          <line x1="9" y1="3" x2="9" y2="21"></line>
+          <polyline points="13 9 16 12 13 15"></polyline>
+        </svg>
+        <span>Панель</span>
+      </button>
       <section id="sec-al-calc">
         <div class="section-heading">
           <div><span class="eyebrow">Головна · Розрахунок білета та доведення</span><h2>Твій білет, питання Nivel 1–4 та розв’язки</h2></div>
@@ -783,6 +962,20 @@
     let simSec = 420;
     let simTimer = null;
     let simTicketIndex = 0;
+
+    function toggleSidebar(collapse) {
+      document.querySelectorAll('.app-shell').forEach(shell => {
+        const shouldCollapse = typeof collapse === 'boolean' ? collapse : !shell.classList.contains('sidebar-collapsed');
+        shell.classList.toggle('sidebar-collapsed', shouldCollapse);
+        const hideBtn = shell.querySelector('.sidebar-toggle-btn');
+        const openBtn = shell.querySelector('.sidebar-open-btn');
+        if (hideBtn) hideBtn.setAttribute('aria-expanded', String(!shouldCollapse));
+        if (openBtn) {
+          openBtn.setAttribute('aria-expanded', String(!shouldCollapse));
+          openBtn.setAttribute('tabindex', shouldCollapse ? '0' : '-1');
+        }
+      });
+    }
 
     function openDiscreteMath() {
       document.getElementById('landing-screen').hidden = true;
