@@ -665,6 +665,11 @@ AL_N2.forEach(q => AL.push({ nivel: 2, num: q[0], title: q[1], body: q[2], title
 AL_N3.forEach(q => AL.push({ nivel: 3, num: q[0], title: q[1], body: q[2] }));
 AL_N4.forEach(q => AL.push({ nivel: 4, num: q[0], title: q[1], body: q[2] }));
 
+const AL_N4_SHCHEGLOV_IMAGES = {
+  1: ['images/al-nivel4-1-ellipse.png'],
+  2: ['images/al-nivel4-2-hyperbola.jpg']
+};
+
 function alFind(nivel, num) { return AL.find(q => q.nivel === nivel && q.num === num); }
 function alTitle(q, k) { return q.titleFn ? q.titleFn(k) : q.title; }
 function alBody(q, k) { return q.dynamic ? q.body(k) : q.body; }
@@ -694,10 +699,20 @@ function alBuildTicketHTML(k) {
   const cards = slots.map(slot => {
     const item = alFind(slot.nivel, slot.qNum);
     const styleClass = slot.nivel === 3 ? 'mint' : slot.nivel === 4 ? 'butter' : '';
+    const boardImgs = slot.nivel === 4 ? AL_N4_SHCHEGLOV_IMAGES[slot.qNum] : null;
+    const boardHTML = boardImgs ? (
+      '<div class="question-actions">' +
+      '<button type="button" class="button proof-toggle-btn" aria-expanded="false" onclick="toggleBoardScreen(this)">' +
+      '<span>Пояснення Щеглова</span><span class="proof-arrow" aria-hidden="true">↓</span></button></div>' +
+      '<div class="proof-box board-screen-box" hidden>' +
+      boardImgs.map((src, idx) => '<img src="' + src + '" alt="Пояснення Щеглова: ' + alTitle(item, k) + (boardImgs.length > 1 ? ' (частина ' + (idx + 1) + ')' : '') + '" class="board-screen-img" loading="lazy">').join('') +
+      '</div>'
+    ) : '';
     return '<article class="panel ticket-solution-card ' + styleClass + '">' +
       '<div class="ticket-solution-meta"><span class="tag">Білет №' + k + ' · Nivel ' + slot.nivel + ' · Питання №' + slot.qNum + '</span>' +
       '<span class="mini-label">' + slot.formula + '</span></div>' +
       '<h4>' + alTitle(item, k) + '</h4>' +
+      boardHTML +
       '<div class="proof-box"><b>' + alBoxLabel(slot.nivel) + '</b><br>' + alBody(item, k) + '</div>' +
       '</article>';
   }).join('');
@@ -786,12 +801,23 @@ function alRenderQuestions() {
     const styleClass = nivel === 3 ? 'mint' : nivel === 4 ? 'butter' : '';
     const cards = items.map(q => {
       const dyn = !!q.dynamic;
+      const boardImgs = q.nivel === 4 ? AL_N4_SHCHEGLOV_IMAGES[q.num] : null;
+      const boardBtnHTML = boardImgs ? (
+        '<button type="button" class="button proof-toggle-btn" aria-expanded="false" onclick="toggleBoardScreen(this)">' +
+        '<span>Пояснення Щеглова</span><span class="proof-arrow" aria-hidden="true">↓</span></button>'
+      ) : '';
+      const boardBoxHTML = boardImgs ? (
+        '<div class="proof-box board-screen-box" hidden>' +
+        boardImgs.map((src, idx) => '<img src="' + src + '" alt="Пояснення Щеглова: ' + q.title + (boardImgs.length > 1 ? ' (частина ' + (idx + 1) + ')' : '') + '" class="board-screen-img" loading="lazy">').join('') +
+        '</div>'
+      ) : '';
       return '<article class="panel question-item-card ' + styleClass + '" data-nivel="' + q.nivel + '" data-num="' + q.num + '">' +
         '<div class="ticket-solution-meta"><span class="tag">Nivel ' + q.nivel + ' · Питання №' + q.num + '</span></div>' +
         '<h4>' + q.title + '</h4>' +
         '<div class="question-actions"><button type="button" class="button proof-toggle-btn" aria-expanded="false" onclick="alToggleProof(this)">' +
-        '<span>' + btnLabel[nivel] + '</span><span class="proof-arrow" aria-hidden="true">↓</span></button></div>' +
+        '<span>' + btnLabel[nivel] + '</span><span class="proof-arrow" aria-hidden="true">↓</span></button>' + boardBtnHTML + '</div>' +
         '<div class="proof-box question-proof-content" hidden' + (dyn ? ' data-dynamic="1"' : '') + '>' + (dyn ? '' : q.body) + '</div>' +
+        boardBoxHTML +
         '</article>';
     }).join('');
     return '<div class="questions-level-block"><div class="panel ticket-solutions-header"><div><span class="eyebrow">' + heads[nivel] + '</span>' +
@@ -818,9 +844,16 @@ function alStartSim() {
     const slots = alSlots(k);
     const items = slots.map(s => {
       const item = alFind(s.nivel, s.qNum);
+      const boardImgs = s.nivel === 4 ? AL_N4_SHCHEGLOV_IMAGES[s.qNum] : null;
+      const boardDetails = boardImgs ? (
+        '<details style="margin-top:6px"><summary>Пояснення Щеглова</summary>' +
+        '<div class="proof-box board-screen-box" style="margin-top:8px">' +
+        boardImgs.map((src, idx) => '<img src="' + src + '" alt="Пояснення Щеглова: ' + alTitle(item, k) + (boardImgs.length > 1 ? ' (частина ' + (idx + 1) + ')' : '') + '" class="board-screen-img" loading="lazy">').join('') +
+        '</div></details>'
+      ) : '';
       return '<li style="margin-bottom:10px"><span class="tag">Nivel ' + s.nivel + ' · №' + s.qNum + '</span> <b>' + alTitle(item, k) + '</b>' +
         '<details style="margin-top:6px"><summary>Показати ' + (s.nivel === 1 ? 'означення' : s.nivel === 2 ? 'розв’язок' : 'доведення') + '</summary>' +
-        '<div class="proof-box" style="margin-top:8px">' + alBody(item, k) + '</div></details></li>';
+        '<div class="proof-box" style="margin-top:8px">' + alBody(item, k) + '</div></details>' + boardDetails + '</li>';
     }).join('');
     holder.innerHTML = '<div class="panel ticket-card"><span class="tag">Тренувальний білет №' + k + '</span>' +
       '<h3>Відповідай на 6 питань білета</h3>' +
